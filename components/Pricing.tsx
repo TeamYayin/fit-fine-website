@@ -1,8 +1,8 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { PLANS } from '../data/mockData';
-import Button from './Button';
-import { Check } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import { PLANS } from "../data/mockData";
+import Button from "./Button";
+import { Check } from "lucide-react";
 
 const Pricing: React.FC = () => {
   const handleCheckout = (planName: string) => {
@@ -10,14 +10,21 @@ const Pricing: React.FC = () => {
   };
 
   return (
-    <section id="plans" className="py-24 bg-premium-dark relative overflow-hidden">
+    <section
+      id="plans"
+      className="py-24 bg-premium-dark relative overflow-hidden"
+    >
       {/* Background patterns */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full opacity-5 bg-[radial-gradient(#D4AF37_1px,transparent_1px)] [background-size:20px_20px]" />
-      
+
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-heading font-bold text-white mb-4">Invest in Yourself</h2>
-          <p className="text-gray-400">Choose the tier that matches your ambition.</p>
+          <h2 className="text-3xl md:text-5xl font-heading font-bold text-white mb-4">
+            Invest in Yourself
+          </h2>
+          <p className="text-gray-400">
+            Choose the tier that matches your ambition.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
@@ -44,8 +51,12 @@ const Pricing: React.FC = () => {
                   {plan.name}
                 </h3>
                 <div className="flex items-baseline justify-center md:justify-start">
-                  <span className="text-4xl md:text-5xl font-bold text-white">₹{plan.price}</span>
-                  <span className="ml-2 text-sm text-gray-500 uppercase">/month</span>
+                  <span className="text-4xl md:text-5xl font-bold text-white">
+                    ₹{plan.price}
+                  </span>
+                  <span className="ml-2 text-sm text-gray-500 uppercase">
+                    /month
+                  </span>
                 </div>
               </div>
 
@@ -57,14 +68,12 @@ const Pricing: React.FC = () => {
                     <div className="mt-1 mr-4 flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full transition-colors bg-white/10 text-gray-400 group-hover:bg-gold group-hover:text-black">
                       <Check size={12} strokeWidth={3} />
                     </div>
-                    <span className="text-sm text-gray-300">
-                      {feature}
-                    </span>
+                    <span className="text-sm text-gray-300">{feature}</span>
                   </li>
                 ))}
               </ul>
 
-              <Button 
+              <Button
                 onClick={() => handleCheckout(plan.name)}
                 variant="outline"
                 fullWidth

@@ -7,6 +7,7 @@ export interface SuccessStory {
   quote: string;
   description: string;
   imageUrl: string;
+  plan?: 'Silver' | 'Gold' | 'Platinum';
 }
 
 export interface Plan {

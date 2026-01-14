@@ -42,7 +42,7 @@ const ContactPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-premium-dark py-12 md:py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-premium-dark py-12 md:py-24 pb-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
           <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gold/5 blur-[120px] rounded-full" />
