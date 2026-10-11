@@ -225,11 +225,22 @@ import Layout from '../layouts/Layout.astro';
           successBox?.classList.remove('hidden');
           form.reset();
         } else {
-          if (errorText) errorText.textContent = data.error || 'Failed to submit request. Please try again or call our hotline.';
+          let msg = data.error || (res.status === 404 ? 'API endpoint /api/contact not found (404).' : `Server error (${res.status}): Please check server configuration.`);
+          if (data.details) {
+            try {
+              const parsed = JSON.parse(data.details);
+              if (parsed.message) msg += ` — ${parsed.message}`;
+            } catch (_) {
+              msg += ` — ${data.details}`;
+            }
+          }
+          if (errorText) errorText.textContent = msg;
+          console.error('Contact submission error:', res.status, data);
           errorBox?.classList.remove('hidden');
         }
-      } catch (err) {
-        if (errorText) errorText.textContent = 'Network error reaching submission server. Please try again or call our hotline.';
+      } catch (err: any) {
+        console.error('Network error during contact submission:', err);
+        if (errorText) errorText.textContent = 'Network error reaching submission server: ' + (err?.message || 'Please check connection.');
         errorBox?.classList.remove('hidden');
       } finally {
         if (submitBtn) {

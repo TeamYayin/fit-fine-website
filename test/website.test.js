@@ -122,3 +122,27 @@ test('Contact form payload validation enforces mandatory fields and honeypot', (
   assert.strictEqual(botSubmission.spamFiltered, true);
 });
 
+test('Worker entrypoint routes /api/contact correctly', async () => {
+  const worker = (await import('../src/worker.js')).default;
+  assert.ok(typeof worker.fetch === 'function');
+
+  // Test OPTIONS preflight request
+  const optionsReq = new Request('https://example.com/api/contact', { method: 'OPTIONS' });
+  const optionsRes = await worker.fetch(optionsReq, {});
+  assert.strictEqual(optionsRes.status, 204);
+
+  // Test static asset delegation
+  let assetFetched = false;
+  const pageReq = new Request('https://example.com/plans', { method: 'GET' });
+  await worker.fetch(pageReq, {
+    ASSETS: {
+      fetch: async () => {
+        assetFetched = true;
+        return new Response('page');
+      },
+    },
+  });
+  assert.strictEqual(assetFetched, true);
+});
+
+
