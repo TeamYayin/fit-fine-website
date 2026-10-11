@@ -1,0 +1,37 @@
+---
+const transformationWins = [
+  'Unshakable morning energy',
+  'Deeper, restorative sleep',
+  'Confident posture & presence',
+  'Quicker recovery between efforts',
+  'Calm focus under pressure',
+  'Stronger immunity & resilience',
+];
+---
+
+<section class="py-24 bg-premium-black">
+  <div class="container mx-auto px-4">
+    <div class="text-center max-w-3xl mx-auto mb-14">
+      <p class="text-gold uppercase tracking-[0.24em] text-xs font-semibold mb-4">
+        Beyond Numbers
+      </p>
+      <h2 class="text-3xl md:text-5xl font-bold text-white leading-tight mb-4">
+        Results you can feel—even before the mirror shows it.
+      </h2>
+      <p class="text-gray-400 text-base md:text-lg leading-relaxed">
+        Strength that shows up as sharper focus, steadier mood, and unapologetic confidence.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+      {transformationWins.map((win) => (
+        <div class="bg-premium-dark/70 border border-white/10 rounded-2xl p-7 flex items-center gap-4 hover:border-gold/60 transition-all duration-300">
+          <div class="w-10 h-10 rounded-full border border-gold/50 flex items-center justify-center text-gold shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"></path></svg>
+          </div>
+          <p class="text-white font-medium text-base">{win}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

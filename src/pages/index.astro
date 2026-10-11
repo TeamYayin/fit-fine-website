@@ -1,0 +1,53 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import BrandPhilosophy from '../components/BrandPhilosophy.astro';
+import FitnessJourney from '../components/FitnessJourney.astro';
+import SystemRoadmap from '../components/SystemRoadmap.astro';
+import ScienceApproach from '../components/ScienceApproach.astro';
+import LifestyleIntegration from '../components/LifestyleIntegration.astro';
+import CommunityAccountability from '../components/CommunityAccountability.astro';
+import MasteryProof from '../components/MasteryProof.astro';
+import TransformationWins from '../components/TransformationWins.astro';
+import VisualMotivation from '../components/VisualMotivation.astro';
+import TrustSignals from '../components/TrustSignals.astro';
+import LegacyCta from '../components/LegacyCta.astro';
+---
+
+<Layout title="Eugen FnF | Luxury Fitness & Concierge Health Coaching">
+  {/* Scroll Progress Bar */}
+  <div class="fixed top-20 left-0 right-0 z-30 pointer-events-none">
+    <div class="h-1 bg-white/5">
+      <div
+        id="scroll-progress-bar"
+        class="h-1 bg-gradient-to-r from-gold via-gold-light to-gold transition-[width] duration-100 ease-out"
+        style="width: 0%"
+      ></div>
+    </div>
+  </div>
+
+  <Hero />
+  <BrandPhilosophy />
+  <FitnessJourney />
+  <SystemRoadmap />
+  <ScienceApproach />
+  <LifestyleIntegration />
+  <CommunityAccountability />
+  <MasteryProof />
+  <TransformationWins />
+  <VisualMotivation />
+  <TrustSignals />
+  <LegacyCta />
+
+  <script>
+    const progressBar = document.getElementById('scroll-progress-bar');
+    window.addEventListener('scroll', () => {
+      const scrollable = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = window.scrollY;
+      const pct = scrollable ? Math.min(100, Math.max(0, (scrolled / scrollable) * 100)) : 0;
+      if (progressBar) {
+        progressBar.style.width = `${pct}%`;
+      }
+    });
+  </script>
+</Layout>

@@ -1,0 +1,34 @@
+---
+const motivationBursts = [
+  'Move like you respect your future self.',
+  'Strength is silent luxury.',
+  'Recovery is the new hustle.',
+  'Precision beats intensity—every time.',
+  'Discipline is the most elegant flex.',
+];
+---
+
+<section class="py-24 bg-premium-dark border-t border-white/5 relative overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-r from-premium-black via-transparent to-premium-black/70 opacity-80 pointer-events-none"></div>
+  <div class="container mx-auto px-4 relative z-10">
+    <div class="text-center max-w-4xl mx-auto mb-12">
+      <p class="text-gold uppercase tracking-[0.22em] text-xs font-semibold mb-3">
+        Visual Motivation
+      </p>
+      <h3 class="text-3xl md:text-5xl font-bold text-white leading-tight">
+        Words that keep you moving when no one is watching.
+      </h3>
+    </div>
+
+    <div class="space-y-4 max-w-5xl mx-auto">
+      {motivationBursts.map((line) => (
+        <div class="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-r from-black via-premium-dark to-black p-6 md:p-8 hover:border-gold/40 transition-all duration-300">
+          <div class="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_20%_20%,rgba(212,175,55,0.25),transparent_40%)] pointer-events-none"></div>
+          <p class="relative text-2xl md:text-3xl font-bold text-white tracking-tight">
+            "{line}"
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,311 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Interactive Fitness & Metabolic Calculators | Eugen FnF">
+  <div class="min-h-screen bg-premium-black pb-20">
+    <section class="py-24 bg-premium-dark relative overflow-hidden">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full opacity-5 bg-[radial-gradient(#D4AF37_1px,transparent_1px)] [background-size:20px_20px]"></div>
+
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16 max-w-3xl mx-auto">
+          <p class="text-gold uppercase tracking-[0.24em] text-xs font-semibold mb-3">Diagnostic Tools</p>
+          <h1 class="text-4xl md:text-6xl font-bold text-white mb-4">
+            Metabolic & Performance <span class="text-gold">Calculators</span>
+          </h1>
+          <p class="text-gray-400 text-lg">
+            Evidence-based formulas calibrated to assess body mass index, basal metabolic expenditure, hydration thresholds, and caloric requirements.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          {/* 1. BMI CALCULATOR */}
+          <div class="bg-black/60 border border-white/10 rounded-2xl p-8 hover:border-gold/50 transition-all duration-300">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-white/5">
+              <div class="p-3 bg-gold/10 rounded-lg border border-gold/20 text-gold">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"></rect><line x1="8" x2="16" y1="6" y2="6"></line><line x1="16" x2="16" y1="14" y2="14"></line><path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path><path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path></svg>
+              </div>
+              <div>
+                <h2 class="text-2xl font-bold text-white">BMI Calculator</h2>
+                <p class="text-xs text-gray-400">Body Mass Index screening tool</p>
+              </div>
+            </div>
+
+            <form id="bmi-form" class="space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-gold uppercase tracking-wider mb-2">Height (cm)</label>
+                  <input type="number" id="bmi-height" required placeholder="e.g. 175" class="w-full px-4 py-3 bg-black border border-white/10 rounded-lg text-white focus:border-gold outline-none text-sm" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gold uppercase tracking-wider mb-2">Weight (kg)</label>
+                  <input type="number" id="bmi-weight" required placeholder="e.g. 70" class="w-full px-4 py-3 bg-black border border-white/10 rounded-lg text-white focus:border-gold outline-none text-sm" />
+                </div>
+              </div>
+              <button type="submit" class="w-full py-3 bg-gold text-black font-bold uppercase tracking-wider text-xs rounded-full hover:bg-gold-light transition-all shadow-md">
+                Calculate BMI
+              </button>
+            </form>
+
+            <div id="bmi-result" class="mt-6 p-4 rounded-xl bg-white/5 border border-white/10 hidden">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xs uppercase text-gray-400 font-semibold">Your BMI Score</p>
+                  <p id="bmi-value" class="text-3xl font-bold text-gold mt-1"></p>
+                </div>
+                <div class="text-right">
+                  <p class="text-xs uppercase text-gray-400 font-semibold">Classification</p>
+                  <p id="bmi-cat" class="text-sm font-bold text-white mt-1 px-3 py-1 bg-white/10 rounded-full inline-block"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 2. BMR CALCULATOR */}
+          <div class="bg-black/60 border border-white/10 rounded-2xl p-8 hover:border-gold/50 transition-all duration-300">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-white/5">
+              <div class="p-3 bg-gold/10 rounded-lg border border-gold/20 text-gold">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+              </div>
+              <div>
+                <h2 class="text-2xl font-bold text-white">BMR Calculator</h2>
+                <p class="text-xs text-gray-400">Mifflin-St Jeor Basal Metabolic Rate</p>
+              </div>
+            </div>
+
+            <form id="bmr-form" class="space-y-4">
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-gold uppercase tracking-wider mb-2">Age</label>
+                  <input type="number" id="bmr-age" required placeholder="e.g. 28" class="w-full px-4 py-3 bg-black border border-white/10 rounded-lg text-white focus:border-gold outline-none text-sm" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gold uppercase tracking-wider mb-2">Gender</label>
+                  <select id="bmr-gender" class="w-full px-4 py-3 bg-black border border-white/10 rounded-lg text-white focus:border-gold outline-none text-sm">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-gold uppercase tracking-wider mb-2">Height (cm)</label>
+                  <input type="number" id="bmr-height" required placeholder="175" class="w-full px-4 py-3 bg-black border border-white/10 rounded-lg text-white focus:border-gold outline-none text-sm" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gold uppercase tracking-wider mb-2">Weight (kg)</label>
+                  <input type="number" id="bmr-weight" required placeholder="70" class="w-full px-4 py-3 bg-black border border-white/10 rounded-lg text-white focus:border-gold outline-none text-sm" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-gold uppercase tracking-wider mb-2">Activity Level</label>
+                <select id="bmr-activity" class="w-full px-4 py-3 bg-black border border-white/10 rounded-lg text-white focus:border-gold outline-none text-sm">
+                  <option value="1.2">Sedentary (Little or no exercise)</option>
+                  <option value="1.375">Lightly Active (1-3 days/week)</option>
+                  <option value="1.55">Moderately Active (3-5 days/week)</option>
+                  <option value="1.725">Very Active (6-7 days/week)</option>
+                </select>
+              </div>
+              <button type="submit" class="w-full py-3 bg-gold text-black font-bold uppercase tracking-wider text-xs rounded-full hover:bg-gold-light transition-all shadow-md">
+                Calculate BMR & TDEE
+              </button>
+            </form>
+
+            <div id="bmr-result" class="mt-6 p-4 rounded-xl bg-white/5 border border-white/10 hidden">
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <p class="text-xs uppercase text-gray-400 font-semibold">Basal Metabolic Rate</p>
+                  <p id="bmr-value" class="text-2xl font-bold text-white mt-1"></p>
+                </div>
+                <div>
+                  <p class="text-xs uppercase text-gray-400 font-semibold">Total Energy (TDEE)</p>
+                  <p id="bmr-tdee" class="text-2xl font-bold text-gold mt-1"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 3. WATER INTAKE CALCULATOR */}
+          <div class="bg-black/60 border border-white/10 rounded-2xl p-8 hover:border-gold/50 transition-all duration-300">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-white/5">
+              <div class="p-3 bg-gold/10 rounded-lg border border-gold/20 text-gold">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"></path></svg>
+              </div>
+              <div>
+                <h2 class="text-2xl font-bold text-white">Hydration Calculator</h2>
+                <p class="text-xs text-gray-400">Daily optimal water intake</p>
+              </div>
+            </div>
+
+            <form id="water-form" class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold text-gold uppercase tracking-wider mb-2">Weight (kg)</label>
+                <input type="number" id="water-weight" required placeholder="e.g. 70" class="w-full px-4 py-3 bg-black border border-white/10 rounded-lg text-white focus:border-gold outline-none text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-gold uppercase tracking-wider mb-2">Exercise Intensity</label>
+                <select id="water-activity" class="w-full px-4 py-3 bg-black border border-white/10 rounded-lg text-white focus:border-gold outline-none text-sm">
+                  <option value="low">Low (Desk job / minimal sweat)</option>
+                  <option value="moderate">Moderate (30-60 min workout)</option>
+                  <option value="high">Intense (Heavy strength / high heat)</option>
+                </select>
+              </div>
+              <button type="submit" class="w-full py-3 bg-gold text-black font-bold uppercase tracking-wider text-xs rounded-full hover:bg-gold-light transition-all shadow-md">
+                Calculate Water Intake
+              </button>
+            </form>
+
+            <div id="water-result" class="mt-6 p-4 rounded-xl bg-white/5 border border-white/10 hidden">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xs uppercase text-gray-400 font-semibold">Recommended Daily Intake</p>
+                  <p id="water-value" class="text-3xl font-bold text-gold mt-1"></p>
+                </div>
+                <div class="text-right text-xs text-gray-400">
+                  Approx. 10–12 standard glasses
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 4. DAILY CALORIE NEEDS */}
+          <div class="bg-black/60 border border-white/10 rounded-2xl p-8 hover:border-gold/50 transition-all duration-300">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-white/5">
+              <div class="p-3 bg-gold/10 rounded-lg border border-gold/20 text-gold">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+              </div>
+              <div>
+                <h2 class="text-2xl font-bold text-white">Target Calories Calculator</h2>
+                <p class="text-xs text-gray-400">Deficit & surplus goal planner</p>
+              </div>
+            </div>
+
+            <form id="cal-form" class="space-y-4">
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-gold uppercase tracking-wider mb-2">Age</label>
+                  <input type="number" id="cal-age" required placeholder="28" class="w-full px-4 py-3 bg-black border border-white/10 rounded-lg text-white focus:border-gold outline-none text-sm" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gold uppercase tracking-wider mb-2">Weight (kg)</label>
+                  <input type="number" id="cal-weight" required placeholder="70" class="w-full px-4 py-3 bg-black border border-white/10 rounded-lg text-white focus:border-gold outline-none text-sm" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-gold uppercase tracking-wider mb-2">Body Transformation Goal</label>
+                <select id="cal-goal" class="w-full px-4 py-3 bg-black border border-white/10 rounded-lg text-white focus:border-gold outline-none text-sm">
+                  <option value="maintain">Maintain Current Weight</option>
+                  <option value="lose">Fat Loss (Sustainable Deficit -500 kcal)</option>
+                  <option value="gain">Lean Muscle Mass (Surplus +350 kcal)</option>
+                </select>
+              </div>
+              <button type="submit" class="w-full py-3 bg-gold text-black font-bold uppercase tracking-wider text-xs rounded-full hover:bg-gold-light transition-all shadow-md">
+                Compute Target Calories
+              </button>
+            </form>
+
+            <div id="cal-result" class="mt-6 p-4 rounded-xl bg-white/5 border border-white/10 hidden">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xs uppercase text-gray-400 font-semibold">Daily Calorie Target</p>
+                  <p id="cal-value" class="text-3xl font-bold text-gold mt-1"></p>
+                </div>
+                <div class="text-right">
+                  <a href="/plans" class="text-xs uppercase tracking-wider font-bold text-white hover:text-gold transition-colors">
+                    Get Custom Meal Plan &rarr;
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // BMI Calculator Logic
+    document.getElementById('bmi-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const h = parseFloat((document.getElementById('bmi-height') as HTMLInputElement)?.value);
+      const w = parseFloat((document.getElementById('bmi-weight') as HTMLInputElement)?.value);
+      if (h > 0 && w > 0) {
+        const hm = h / 100;
+        const bmi = (w / (hm * hm)).toFixed(1);
+        let cat = 'Normal Weight';
+        const numBmi = parseFloat(bmi);
+        if (numBmi < 18.5) cat = 'Underweight';
+        else if (numBmi < 25) cat = 'Normal Weight';
+        else if (numBmi < 30) cat = 'Overweight';
+        else cat = 'Obese';
+
+        const resultEl = document.getElementById('bmi-result');
+        const valEl = document.getElementById('bmi-value');
+        const catEl = document.getElementById('bmi-cat');
+        if (valEl) valEl.textContent = bmi;
+        if (catEl) catEl.textContent = cat;
+        resultEl?.classList.remove('hidden');
+      }
+    });
+
+    // BMR Calculator Logic
+    document.getElementById('bmr-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const age = parseFloat((document.getElementById('bmr-age') as HTMLInputElement)?.value);
+      const gender = (document.getElementById('bmr-gender') as HTMLSelectElement)?.value;
+      const h = parseFloat((document.getElementById('bmr-height') as HTMLInputElement)?.value);
+      const w = parseFloat((document.getElementById('bmr-weight') as HTMLInputElement)?.value);
+      const act = parseFloat((document.getElementById('bmr-activity') as HTMLSelectElement)?.value);
+
+      if (age > 0 && h > 0 && w > 0) {
+        let bmr = (10 * w) + (6.25 * h) - (5 * age);
+        bmr = gender === 'male' ? bmr + 5 : bmr - 161;
+        const tdee = Math.round(bmr * act);
+
+        const resultEl = document.getElementById('bmr-result');
+        const bmrVal = document.getElementById('bmr-value');
+        const tdeeVal = document.getElementById('bmr-tdee');
+        if (bmrVal) bmrVal.textContent = `${Math.round(bmr)} kcal`;
+        if (tdeeVal) tdeeVal.textContent = `${tdee} kcal`;
+        resultEl?.classList.remove('hidden');
+      }
+    });
+
+    // Water Calculator Logic
+    document.getElementById('water-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const w = parseFloat((document.getElementById('water-weight') as HTMLInputElement)?.value);
+      const intensity = (document.getElementById('water-activity') as HTMLSelectElement)?.value;
+      if (w > 0) {
+        let base = w * 0.033;
+        if (intensity === 'moderate') base += 0.5;
+        if (intensity === 'high') base += 1.0;
+
+        const resultEl = document.getElementById('water-result');
+        const valEl = document.getElementById('water-value');
+        if (valEl) valEl.textContent = `${base.toFixed(1)} Liters / day`;
+        resultEl?.classList.remove('hidden');
+      }
+    });
+
+    // Calorie Needs Logic
+    document.getElementById('cal-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const age = parseFloat((document.getElementById('cal-age') as HTMLInputElement)?.value);
+      const w = parseFloat((document.getElementById('cal-weight') as HTMLInputElement)?.value);
+      const goal = (document.getElementById('cal-goal') as HTMLSelectElement)?.value;
+
+      if (age > 0 && w > 0) {
+        // Approximate baseline: 30 kcal/kg
+        let baseline = w * 30;
+        if (goal === 'lose') baseline -= 500;
+        if (goal === 'gain') baseline += 350;
+
+        const resultEl = document.getElementById('cal-result');
+        const valEl = document.getElementById('cal-value');
+        if (valEl) valEl.textContent = `${Math.round(baseline)} kcal / day`;
+        resultEl?.classList.remove('hidden');
+      }
+    });
+  </script>
+</Layout>

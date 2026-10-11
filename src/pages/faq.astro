@@ -1,0 +1,86 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { FAQS, PLAN_FAQS } from '../data/mockData.js';
+---
+
+<Layout title="Frequently Asked Questions | Eugen FnF">
+  <div class="min-h-screen bg-premium-black pb-20">
+    <section class="py-24 bg-premium-dark relative overflow-hidden">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full opacity-5 bg-[radial-gradient(#D4AF37_1px,transparent_1px)] [background-size:20px_20px]"></div>
+
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16 max-w-3xl mx-auto">
+          <p class="text-gold uppercase tracking-[0.24em] text-xs font-semibold mb-3">Knowledge Base</p>
+          <h1 class="text-4xl md:text-6xl font-bold text-white mb-4">
+            Frequently Asked <span class="text-gold">Questions</span>
+          </h1>
+          <p class="text-gray-400 text-lg">
+            Find answers to common inquiries regarding our methodology, subscription tiers, coaching check-ins, and diet customizations.
+          </p>
+        </div>
+
+        {/* Tab Toggle */}
+        <div class="flex justify-center gap-4 mb-12">
+          <button id="tab-gen" class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider text-xs bg-gold text-black transition-all">
+            General Questions
+          </button>
+          <button id="tab-plan" class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider text-xs bg-black/60 text-gray-400 border border-white/10 hover:border-gold hover:text-white transition-all">
+            Plan & Subscription Questions
+          </button>
+        </div>
+
+        {/* FAQ Lists */}
+        <div class="max-w-4xl mx-auto">
+          <div id="general-faqs" class="space-y-4">
+            {FAQS.map((faq) => (
+              <details class="group bg-black/60 border border-white/10 rounded-xl p-6 [&_summary::-webkit-details-marker]:hidden hover:border-gold/50 transition-all">
+                <summary class="flex items-center justify-between cursor-pointer font-semibold text-lg text-white group-open:text-gold">
+                  <span>{faq.question}</span>
+                  <span class="text-gold text-2xl transition-transform group-open:rotate-45">+</span>
+                </summary>
+                <p class="mt-4 text-gray-400 leading-relaxed text-sm border-t border-white/5 pt-4">
+                  {faq.answer}
+                </p>
+              </details>
+            ))}
+          </div>
+
+          <div id="plan-faqs" class="space-y-4 hidden">
+            {PLAN_FAQS.map((faq) => (
+              <details class="group bg-black/60 border border-white/10 rounded-xl p-6 [&_summary::-webkit-details-marker]:hidden hover:border-gold/50 transition-all">
+                <summary class="flex items-center justify-between cursor-pointer font-semibold text-lg text-white group-open:text-gold">
+                  <span>{faq.question}</span>
+                  <span class="text-gold text-2xl transition-transform group-open:rotate-45">+</span>
+                </summary>
+                <p class="mt-4 text-gray-400 leading-relaxed text-sm border-t border-white/5 pt-4">
+                  {faq.answer}
+                </p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const tabGen = document.getElementById('tab-gen');
+    const tabPlan = document.getElementById('tab-plan');
+    const genFaqs = document.getElementById('general-faqs');
+    const planFaqs = document.getElementById('plan-faqs');
+
+    tabGen?.addEventListener('click', () => {
+      tabGen.className = 'px-6 py-3 rounded-xl font-bold uppercase tracking-wider text-xs bg-gold text-black transition-all';
+      tabPlan?.setAttribute('class', 'px-6 py-3 rounded-xl font-bold uppercase tracking-wider text-xs bg-black/60 text-gray-400 border border-white/10 hover:border-gold hover:text-white transition-all');
+      genFaqs?.classList.remove('hidden');
+      planFaqs?.classList.add('hidden');
+    });
+
+    tabPlan?.addEventListener('click', () => {
+      tabPlan.className = 'px-6 py-3 rounded-xl font-bold uppercase tracking-wider text-xs bg-gold text-black transition-all';
+      tabGen?.setAttribute('class', 'px-6 py-3 rounded-xl font-bold uppercase tracking-wider text-xs bg-black/60 text-gray-400 border border-white/10 hover:border-gold hover:text-white transition-all');
+      planFaqs?.classList.remove('hidden');
+      genFaqs?.classList.add('hidden');
+    });
+  </script>
+</Layout>

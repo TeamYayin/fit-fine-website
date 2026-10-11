@@ -1,0 +1,67 @@
+---
+const journeySteps = [
+  {
+    title: 'Grounded Beginner',
+    headline: 'Stabilize and learn your rhythm.',
+    detail: 'We audit sleep, stress, and movement to set a calm, confident baseline.',
+    emphasis: 'Ritual: 10-minute daily prime to anchor consistency.',
+  },
+  {
+    title: 'Disciplined Operator',
+    headline: 'Precision habits replace motivation.',
+    detail: 'Small weekly calibrations—form, breath, tempo—keep you improving without burnout.',
+    emphasis: 'Ritual: Micro-recoveries woven between calls and commutes.',
+  },
+  {
+    title: 'Transformed Performer',
+    headline: 'Strength shows up in posture, energy, and presence.',
+    detail: 'Programming adapts to workload; nutrition supports focus; recovery locks in adaptation.',
+    emphasis: 'Ritual: Evening decompression to sleep deeper and repair faster.',
+  },
+  {
+    title: 'Sustainable Lifestyle',
+    headline: 'Fitness becomes identity, not a phase.',
+    detail: 'We rotate phases to keep you excited, resilient, and ready for what’s next.',
+    emphasis: 'Ritual: Quarterly resets to celebrate progress and raise standards.',
+  },
+];
+---
+
+<section class="py-24 bg-premium-black relative overflow-hidden">
+  <div class="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top,#D4AF37_0%,transparent_35%),radial-gradient(circle_at_bottom,#1C1C1E_0%,transparent_40%)] pointer-events-none"></div>
+  <div class="container mx-auto px-4 relative z-10">
+    <div class="text-center max-w-3xl mx-auto mb-14">
+      <p class="text-gold uppercase tracking-[0.24em] text-xs font-semibold mb-4">
+        Fitness Journey
+      </p>
+      <h2 class="text-3xl md:text-5xl font-bold text-white leading-tight mb-4">
+        Your evolution—mapped with intention.
+      </h2>
+      <p class="text-gray-400 text-base md:text-lg leading-relaxed">
+        From your first deliberate rep to a life where strength is second nature, we guide each phase with clarity.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+      {journeySteps.map((step, index) => (
+        <div class="relative bg-premium-dark/70 border border-white/10 rounded-2xl p-7 lg:p-8 backdrop-blur-sm hover:border-gold/60 hover:-translate-y-1 transition-all duration-300">
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-xs uppercase tracking-[0.2em] text-gold font-bold">
+              {step.title}
+            </span>
+            <span class="text-gray-500 font-mono text-sm">0{index + 1}</span>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3">
+            {step.headline}
+          </h3>
+          <p class="text-gray-300 text-sm leading-relaxed mb-4">
+            {step.detail}
+          </p>
+          <p class="text-gold/90 text-sm font-medium border-t border-white/5 pt-3">
+            {step.emphasis}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

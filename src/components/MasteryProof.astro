@@ -1,0 +1,38 @@
+---
+const proofStats = [
+  { label: 'Years of Mastery', value: '15+', note: 'Refining elite protocols' },
+  { label: 'Lives Transformed', value: '12k+', note: 'Across leaders & creators' },
+  { label: 'Science Backed', value: '100%', note: 'Built on research & data' },
+  { label: 'Elite Support', value: '24/7', note: 'Guidance when you need it' },
+];
+---
+
+<section class="py-24 bg-premium-black border-t border-white/5">
+  <div class="container mx-auto px-4">
+    <div class="text-center max-w-3xl mx-auto mb-14">
+      <p class="text-gold uppercase tracking-[0.24em] text-xs font-semibold mb-4">
+        Proof Points
+      </p>
+      <h2 class="text-3xl md:text-5xl font-bold text-white leading-tight mb-4">
+        Signals of substance, not slogans.
+      </h2>
+      <p class="text-gray-400 text-base md:text-lg leading-relaxed">
+        Pedigree that underwrites every session and every adjustment you receive.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+      {proofStats.map((stat) => (
+        <div class="bg-gradient-to-b from-premium-dark/80 to-black/60 border border-white/10 rounded-xl p-6 text-center hover:border-gold/60 transition-all duration-300">
+          <p class="text-gold text-4xl md:text-5xl font-bold mb-2">
+            {stat.value}
+          </p>
+          <p class="text-white font-semibold uppercase text-xs mb-1 tracking-[0.1em]">
+            {stat.label}
+          </p>
+          <p class="text-gray-400 text-sm">{stat.note}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,133 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { DIET_PLANS } from '../data/mockData.js';
+---
+
+<Layout title="Diet Plans & Nutrition Protocols | Eugen FnF">
+  <div class="min-h-screen bg-premium-black pb-16">
+    <section class="py-24 bg-premium-dark relative overflow-hidden">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full opacity-5 bg-[radial-gradient(#D4AF37_1px,transparent_1px)] [background-size:20px_20px]"></div>
+
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <p class="text-gold uppercase tracking-[0.24em] text-xs font-semibold mb-3">Science-Backed Nutrition</p>
+          <h1 class="text-4xl md:text-6xl font-bold text-white mb-4">
+            Bespoke <span class="text-gold">Diet Protocols</span>
+          </h1>
+          <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+            Targeted metabolic fueling structures crafted for body recomposition, hormonal optimization, and sustainable stamina.
+          </p>
+        </div>
+
+        {/* Category Filter Pills (Client interactive via tabs) */}
+        <div class="flex flex-wrap justify-center gap-3 mb-16" id="category-filters">
+          <button data-cat="all" class="cat-btn px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider bg-gold text-black transition-all">
+            All Protocols
+          </button>
+          <button data-cat="Weight Loss" class="cat-btn px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider bg-black/60 border border-white/10 text-gray-400 hover:border-gold hover:text-white transition-all">
+            Weight Loss
+          </button>
+          <button data-cat="Weight Gain" class="cat-btn px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider bg-black/60 border border-white/10 text-gray-400 hover:border-gold hover:text-white transition-all">
+            Weight Gain
+          </button>
+          <button data-cat="Muscle Gain" class="cat-btn px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider bg-black/60 border border-white/10 text-gray-400 hover:border-gold hover:text-white transition-all">
+            Muscle Gain
+          </button>
+        </div>
+
+        {/* Diet Plans Grid */}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto" id="diet-grid">
+          {DIET_PLANS.map((plan) => (
+            <div
+              class="diet-card bg-black/70 border border-white/10 rounded-2xl p-7 flex flex-col justify-between hover:border-gold/60 hover:shadow-[0_0_30px_rgba(212,175,55,0.1)] transition-all duration-300"
+              data-category={plan.category}
+            >
+              <div>
+                <div class="flex items-center justify-between mb-4">
+                  <span class="text-xs font-bold uppercase tracking-widest text-gold px-3 py-1 bg-gold/10 rounded-full border border-gold/30">
+                    {plan.tier} Tier
+                  </span>
+                  <span class="text-gray-400 text-xs font-mono">{plan.duration}</span>
+                </div>
+
+                <h3 class="text-2xl font-bold text-white mb-2">{plan.name}</h3>
+                <p class="text-xs text-gold font-semibold uppercase tracking-wider mb-3">Goal: {plan.goal}</p>
+                <p class="text-sm text-gray-300 leading-relaxed mb-6">{plan.description}</p>
+
+                {/* Features */}
+                <div class="mb-6">
+                  <h4 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Key Features</h4>
+                  <ul class="space-y-2 text-xs text-gray-300">
+                    {plan.features.map((f) => (
+                      <li class="flex items-center gap-2">
+                        <span class="text-gold font-bold">&check;</span>
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Sample Menu */}
+                <div class="bg-premium-dark/80 border border-white/5 p-4 rounded-xl mb-6">
+                  <h4 class="text-xs font-bold uppercase tracking-widest text-gold mb-3 flex items-center justify-between">
+                    <span>Sample Daily Menu</span>
+                    <span class="text-[10px] text-gray-500 font-normal">Macro Optimized</span>
+                  </h4>
+                  <div class="space-y-2 text-xs">
+                    <div>
+                      <span class="text-gray-400 font-semibold">Breakfast:</span>
+                      <p class="text-gray-200 mt-0.5">{plan.sampleMenu.breakfast}</p>
+                    </div>
+                    <div>
+                      <span class="text-gray-400 font-semibold">Lunch:</span>
+                      <p class="text-gray-200 mt-0.5">{plan.sampleMenu.lunch}</p>
+                    </div>
+                    <div>
+                      <span class="text-gray-400 font-semibold">Snack:</span>
+                      <p class="text-gray-200 mt-0.5">{plan.sampleMenu.snack}</p>
+                    </div>
+                    <div>
+                      <span class="text-gray-400 font-semibold">Dinner:</span>
+                      <p class="text-gray-200 mt-0.5">{plan.sampleMenu.dinner}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <a
+                href={`/contact?plan=${plan.tier}`}
+                class="w-full text-center py-3 rounded-full font-bold uppercase tracking-wider text-xs border border-gold/40 text-gold hover:bg-gold hover:text-black transition-all"
+              >
+                Inquire About {plan.tier} Protocol
+              </a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const buttons = document.querySelectorAll('.cat-btn');
+    const cards = document.querySelectorAll('.diet-card');
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const cat = btn.getAttribute('data-cat');
+        buttons.forEach((b) => {
+          b.className = 'cat-btn px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider bg-black/60 border border-white/10 text-gray-400 hover:border-gold hover:text-white transition-all';
+        });
+        btn.className = 'cat-btn px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider bg-gold text-black transition-all';
+
+        cards.forEach((card) => {
+          const cardCat = card.getAttribute('data-category');
+          if (cat === 'all' || cardCat === cat) {
+            (card as HTMLElement).style.display = 'flex';
+          } else {
+            (card as HTMLElement).style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</Layout>

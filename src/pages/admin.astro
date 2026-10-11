@@ -1,0 +1,181 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { SUCCESS_STORIES, PLANS, FAQS } from '../data/mockData.js';
+---
+
+<Layout title="Admin Portal | Eugen FnF">
+  <div class="min-h-screen bg-black p-6 md:p-12 text-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10 pb-6 border-b border-white/10">
+        <div>
+          <h1 class="text-3xl font-bold text-white">Admin <span class="text-gold">Portal</span></h1>
+          <p class="text-xs text-gray-400 mt-1">Direct management view for marketing content & inquiries</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-xs font-semibold px-3 py-1 bg-gold/10 border border-gold/30 text-gold rounded-full">
+            Role: Super Admin
+          </span>
+          <a href="/" class="text-xs text-gray-400 hover:text-white uppercase font-bold tracking-wider">
+            &larr; Return to Site
+          </a>
+        </div>
+      </div>
+
+      {/* KPI Stats Grid */}
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div class="bg-premium-dark p-6 border border-white/10 rounded-xl flex items-center gap-4 shadow-lg">
+          <div class="bg-white/5 p-3 rounded-lg text-gold border border-gold/20">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </div>
+          <div>
+            <div class="text-3xl font-bold text-white">1,234</div>
+            <div class="text-xs uppercase tracking-widest text-gray-400 font-semibold mt-0.5">Active Members</div>
+          </div>
+        </div>
+
+        <div class="bg-premium-dark p-6 border border-white/10 rounded-xl flex items-center gap-4 shadow-lg">
+          <div class="bg-white/5 p-3 rounded-lg text-gold border border-gold/20">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" x2="22" y1="10" y2="10"></line></svg>
+          </div>
+          <div>
+            <div class="text-3xl font-bold text-white">₹8.4L</div>
+            <div class="text-xs uppercase tracking-widest text-gray-400 font-semibold mt-0.5">Monthly Revenue</div>
+          </div>
+        </div>
+
+        <div class="bg-premium-dark p-6 border border-white/10 rounded-xl flex items-center gap-4 shadow-lg">
+          <div class="bg-white/5 p-3 rounded-lg text-gray-400 border border-white/10">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+          </div>
+          <div>
+            <div class="text-3xl font-bold text-white">12</div>
+            <div class="text-xs uppercase tracking-widest text-gray-400 font-semibold mt-0.5">Pending Inquiries</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div class="flex gap-4 border-b border-white/10 mb-8 overflow-x-auto">
+        <button id="admin-tab-stories" class="pb-4 px-4 font-semibold uppercase tracking-wider text-xs text-gold border-b-2 border-gold transition-colors">
+          Success Stories
+        </button>
+        <button id="admin-tab-plans" class="pb-4 px-4 font-semibold uppercase tracking-wider text-xs text-gray-400 hover:text-white transition-colors">
+          Subscription Plans
+        </button>
+        <button id="admin-tab-faqs" class="pb-4 px-4 font-semibold uppercase tracking-wider text-xs text-gray-400 hover:text-white transition-colors">
+          Knowledge Base (FAQs)
+        </button>
+      </div>
+
+      {/* Content Area */}
+      <div class="bg-premium-dark border border-white/10 rounded-xl overflow-hidden p-6 sm:p-8">
+        {/* STORIES TAB */}
+        <div id="content-stories">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="font-bold text-lg text-white">Active Member Transformation Stories</h3>
+            <button class="text-xs uppercase tracking-wider font-bold bg-gold text-black px-4 py-2 rounded-lg hover:bg-white transition-colors">
+              + Add Story
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-black/60 text-gray-400 text-xs uppercase tracking-widest">
+                <tr>
+                  <th class="p-4 border-b border-white/10">Member Name</th>
+                  <th class="p-4 border-b border-white/10">Plan Tier</th>
+                  <th class="p-4 border-b border-white/10">Weight Progress</th>
+                  <th class="p-4 border-b border-white/10">Quote</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/5">
+                {SUCCESS_STORIES.map((story) => (
+                  <tr class="hover:bg-white/5 transition-colors">
+                    <td class="p-4 font-medium text-white flex items-center gap-3">
+                      <img src={story.imageUrl} alt={story.name} class="w-8 h-8 rounded-full object-cover" />
+                      <span>{story.name}</span>
+                    </td>
+                    <td class="p-4 text-gold font-bold text-xs uppercase">{story.plan}</td>
+                    <td class="p-4 text-gray-300">
+                      -{(story.beforeWeight - story.afterWeight).toFixed(1)}kg in {story.durationWeeks} wks
+                    </td>
+                    <td class="p-4 text-gray-400 italic text-xs max-w-xs truncate">"{story.quote}"</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* PLANS TAB */}
+        <div id="content-plans" class="hidden">
+          <h3 class="font-bold text-lg text-white mb-6">Configured Pricing Tiers</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {PLANS.map((plan) => (
+              <div class="bg-black/60 border border-white/10 rounded-xl p-6">
+                <div class="flex items-center justify-between mb-2">
+                  <h4 class="font-bold text-xl text-white uppercase">{plan.name}</h4>
+                  <span class="text-gold font-bold">₹{plan.price}/mo</span>
+                </div>
+                <p class="text-xs text-gray-400 mb-4">{plan.description}</p>
+                <ul class="text-xs space-y-2 text-gray-300">
+                  {plan.features.map((f) => (
+                    <li>&bull; {f}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* FAQS TAB */}
+        <div id="content-faqs" class="hidden">
+          <h3 class="font-bold text-lg text-white mb-6">Published Frequently Asked Questions</h3>
+          <div class="space-y-4">
+            {FAQS.map((faq) => (
+              <div class="bg-black/60 border border-white/10 rounded-xl p-5">
+                <h4 class="font-bold text-gold text-sm mb-2">{faq.question}</h4>
+                <p class="text-gray-300 text-xs leading-relaxed">{faq.answer}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tabStories = document.getElementById('admin-tab-stories');
+    const tabPlans = document.getElementById('admin-tab-plans');
+    const tabFaqs = document.getElementById('admin-tab-faqs');
+    const contentStories = document.getElementById('content-stories');
+    const contentPlans = document.getElementById('content-plans');
+    const contentFaqs = document.getElementById('content-faqs');
+
+    const resetTabs = () => {
+      [tabStories, tabPlans, tabFaqs].forEach((t) => {
+        t?.setAttribute('class', 'pb-4 px-4 font-semibold uppercase tracking-wider text-xs text-gray-400 hover:text-white transition-colors');
+      });
+      [contentStories, contentPlans, contentFaqs].forEach((c) => {
+        c?.classList.add('hidden');
+      });
+    };
+
+    tabStories?.addEventListener('click', () => {
+      resetTabs();
+      tabStories.className = 'pb-4 px-4 font-semibold uppercase tracking-wider text-xs text-gold border-b-2 border-gold transition-colors';
+      contentStories?.classList.remove('hidden');
+    });
+
+    tabPlans?.addEventListener('click', () => {
+      resetTabs();
+      tabPlans.className = 'pb-4 px-4 font-semibold uppercase tracking-wider text-xs text-gold border-b-2 border-gold transition-colors';
+      contentPlans?.classList.remove('hidden');
+    });
+
+    tabFaqs?.addEventListener('click', () => {
+      resetTabs();
+      tabFaqs.className = 'pb-4 px-4 font-semibold uppercase tracking-wider text-xs text-gold border-b-2 border-gold transition-colors';
+      contentFaqs?.classList.remove('hidden');
+    });
+  </script>
+</Layout>
