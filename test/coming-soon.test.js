@@ -77,6 +77,19 @@ test('Countdown utility - resolves launch date from environment cascading priori
   };
   assert.equal(resolveLaunchDate(env3), '2026-09-01T00:00:00+05:30');
 
+  // Test process.env fallback
+  const originalEnv = process.env.PUBLIC_LAUNCH_DATE;
+  try {
+    process.env.PUBLIC_LAUNCH_DATE = '2026-11-11T00:00:00+05:30';
+    assert.equal(resolveLaunchDate({}), '2026-11-11T00:00:00+05:30');
+  } finally {
+    if (originalEnv !== undefined) {
+      process.env.PUBLIC_LAUNCH_DATE = originalEnv;
+    } else {
+      delete process.env.PUBLIC_LAUNCH_DATE;
+    }
+  }
+
   // Test default fallback
   assert.equal(resolveLaunchDate({}), '2026-10-01T00:00:00+05:30');
 });

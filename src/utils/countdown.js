@@ -36,10 +36,14 @@ export function formatTimeUnit(value) {
  * @returns {string}
  */
 export function resolveLaunchDate(env = {}) {
+  const nodeEnv = typeof process !== 'undefined' && process?.env ? process.env : {};
   return (
-    env.PUBLIC_LAUNCH_DATE ||
-    env.LAUNCH_DATE ||
-    env.VITE_LAUNCH_DATE ||
+    env?.PUBLIC_LAUNCH_DATE ||
+    nodeEnv.PUBLIC_LAUNCH_DATE ||
+    env?.LAUNCH_DATE ||
+    nodeEnv.LAUNCH_DATE ||
+    env?.VITE_LAUNCH_DATE ||
+    nodeEnv.VITE_LAUNCH_DATE ||
     '2026-10-01T00:00:00+05:30'
   );
 }
