@@ -1,0 +1,43 @@
+---
+const particles = [
+  { left: "8%", top: "18%", size: 3, opacity: 0.5, delay: "0s" },
+  { left: "16%", top: "78%", size: 2, opacity: 0.35, delay: "1.2s" },
+  { left: "27%", top: "32%", size: 4, opacity: 0.25, delay: "0.6s" },
+  { left: "68%", top: "14%", size: 2, opacity: 0.45, delay: "1.8s" },
+  { left: "76%", top: "66%", size: 3, opacity: 0.4, delay: "0.9s" },
+  { left: "91%", top: "38%", size: 2, opacity: 0.3, delay: "2.1s" },
+];
+---
+
+<div id="background-effect" class="absolute inset-0 overflow-hidden bg-night select-none pointer-events-none" aria-hidden="true">
+  <!-- Parallax hero background image -->
+  <div
+    id="bg-hero-img"
+    class="absolute -inset-8 bg-[url('/assets/eugen-fnf-hero.png')] bg-cover bg-center opacity-70 blur-[2px] scale-105 will-change-transform"
+  ></div>
+
+  <!-- Radial and linear lighting gradient masks -->
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(212,175,55,0.18),transparent_30%),linear-gradient(90deg,rgba(10,10,10,0.94),rgba(10,10,10,0.58)_48%,rgba(10,10,10,0.94))]"></div>
+  <div class="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(10,10,10,0.58),rgba(10,10,10,0.18)_42%,rgba(10,10,10,0.92))]"></div>
+
+  <!-- Ambient Luxury Decorative Rings -->
+  <div
+    id="bg-ring-1"
+    class="absolute left-[8%] top-[12%] h-64 w-64 rounded-full border border-gold/15 shadow-[inset_0_0_48px_rgba(212,175,55,0.08)] sm:h-96 sm:w-96 will-change-transform"
+  ></div>
+  <div
+    id="bg-ring-2"
+    class="absolute bottom-[8%] right-[6%] h-56 w-56 rounded-full border border-white/10 shadow-[inset_0_0_42px_rgba(255,255,255,0.05)] sm:h-80 sm:w-80 will-change-transform"
+  ></div>
+
+  <!-- Glowing Gold Particles -->
+  <div id="bg-particles" class="absolute inset-0 will-change-transform">
+    {particles.map((p) => (
+      <span
+        class="absolute rounded-full bg-gold shadow-[0_0_16px_rgba(212,175,55,0.75)] animate-pulse"
+        style={`left: ${p.left}; top: ${p.top}; width: ${p.size}px; height: ${p.size}px; opacity: ${p.opacity}; animation-delay: ${p.delay}; animation-duration: 3.5s;`}
+      />
+    ))}
+  </div>
+</div>
+

@@ -1,0 +1,95 @@
+---
+import { getRemainingTime, formatTimeUnit } from "../utils/countdown.js";
+
+interface Props {
+  target: string;
+}
+
+const { target } = Astro.props;
+const initialTime = getRemainingTime(target);
+
+const units = [
+  { key: "days", label: "Days", value: formatTimeUnit(initialTime.days) },
+  { key: "hours", label: "Hours", value: formatTimeUnit(initialTime.hours) },
+  { key: "minutes", label: "Minutes", value: formatTimeUnit(initialTime.minutes) },
+  { key: "seconds", label: "Seconds", value: formatTimeUnit(initialTime.seconds) },
+];
+---
+
+<div
+  id="countdown-timer"
+  data-target={target}
+  class="grid w-full max-w-3xl mx-auto grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4 select-none"
+>
+  {units.map((unit) => (
+    <div class="relative overflow-hidden rounded-md border border-white/10 bg-black/40 px-4 py-5 text-center shadow-2xl shadow-black/40 backdrop-blur-xl transition duration-300 hover:border-gold/30">
+      <!-- Gold Top Edge Glow -->
+      <div class="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-gold/70 to-transparent" />
+
+      <!-- Value Display -->
+      <div
+        id={`countdown-${unit.key}`}
+        data-unit={unit.key}
+        class="countdown-digit font-sans text-4xl font-black tabular-nums tracking-normal text-white sm:text-5xl transition-all duration-300"
+      >
+        {unit.value}
+      </div>
+
+      <!-- Label -->
+      <div class="mt-1.5 text-[0.68rem] font-bold uppercase tracking-[0.22em] text-gold-soft/80">
+        {unit.label}
+      </div>
+    </div>
+  ))}
+</div>
+
+<script>
+  import { getRemainingTime, formatTimeUnit } from "../utils/countdown.js";
+
+  function initCountdown() {
+    const timerEl = document.getElementById("countdown-timer");
+    if (!timerEl) return;
+
+    const targetDateStr = timerEl.getAttribute("data-target") || "2026-10-01T00:00:00+05:30";
+    const targetDate = new Date(targetDateStr);
+
+    const daysEl = document.getElementById("countdown-days");
+    const hoursEl = document.getElementById("countdown-hours");
+    const minutesEl = document.getElementById("countdown-minutes");
+    const secondsEl = document.getElementById("countdown-seconds");
+
+    function update() {
+      const remaining = getRemainingTime(targetDate);
+
+      const daysVal = formatTimeUnit(remaining.days);
+      const hoursVal = formatTimeUnit(remaining.hours);
+      const minutesVal = formatTimeUnit(remaining.minutes);
+      const secondsVal = formatTimeUnit(remaining.seconds);
+
+      if (daysEl && daysEl.textContent !== daysVal) daysEl.textContent = daysVal;
+      if (hoursEl && hoursEl.textContent !== hoursVal) hoursEl.textContent = hoursVal;
+      if (minutesEl && minutesEl.textContent !== minutesVal) minutesEl.textContent = minutesVal;
+      if (secondsEl && secondsEl.textContent !== secondsVal) secondsEl.textContent = secondsVal;
+    }
+
+    // Run immediately to ensure synchronization
+    update();
+
+    // Run interval
+    const intervalId = window.setInterval(update, 1000);
+
+    // Clean up on page navigation if astro:before-swap
+    document.addEventListener("astro:before-swap", () => {
+      window.clearInterval(intervalId);
+    }, { once: true });
+  }
+
+  // Support both standard DOM load and Astro View Transitions
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initCountdown);
+  } else {
+    initCountdown();
+  }
+  document.addEventListener("astro:page-load", initCountdown);
+</script>
+

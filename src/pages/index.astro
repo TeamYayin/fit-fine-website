@@ -1,0 +1,15 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Hero from "../components/Hero.astro";
+import { resolveLaunchDate } from "../utils/countdown.js";
+
+const launchDate = resolveLaunchDate(import.meta.env);
+---
+
+<Layout
+  title="Eugen FnF | Coming Soon"
+  description="Eugen FnF is launching soon with an elite premium fitness experience."
+>
+  <Hero launchDate={launchDate} />
+</Layout>
+

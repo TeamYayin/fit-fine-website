@@ -1,71 +1,58 @@
 # Eugen FnF Coming Soon Landing Page
 
-A premium fitness brand coming-soon landing page built with React, Vite, Tailwind CSS, and Framer Motion.
+A luxury fitness brand coming-soon landing page built with **Astro** and **Tailwind CSS**, designed for instant loading, silky-smooth hardware-accelerated pointer parallax, and zero runtime bloat.
 
-## Install Dependencies
+## Tech Stack
+- **Framework:** Astro 4 (Static Site Generation)
+- **Styling:** Tailwind CSS (Luxury Gold & Dark Night Theme)
+- **Deployment:** Cloudflare Pages (Static Output)
 
+## Getting Started
+
+### 1. Install Dependencies
 ```bash
 npm install
 ```
 
-On Windows PowerShell, if `npm` is blocked by execution policy, use:
-
-```bash
-npm.cmd install
-```
-
-## Run Development Server
-
+### 2. Start Development Server
 ```bash
 npm run dev
 ```
+Open `http://localhost:4321` to view in browser.
 
-On Windows PowerShell:
-
+### 3. Run Tests
 ```bash
-npm.cmd run dev
+npm test
 ```
 
-The app will be available at:
-
-```txt
-http://localhost:5173
-```
-
-## Build for Production
-
+### 4. Build for Production
 ```bash
 npm run build
 ```
+Build output is generated into the `dist/` directory.
 
-On Windows PowerShell:
-
-```bash
-npm.cmd run build
-```
-
-## Preview Production Build
-
+### 5. Preview Production Build
 ```bash
 npm run preview
 ```
 
-On Windows PowerShell:
+## Cloudflare Pages Deployment
 
-```bash
-npm.cmd run preview
+When setting up your Cloudflare Pages project:
+- **Framework preset:** `Astro` (or `None`)
+- **Build command:** `npm run build`
+- **Build output directory:** `dist`
+
+### Environment Variables
+
+Configure the countdown target launch date in Cloudflare Pages dashboard under **Settings > Environment variables** (or in a `.env` file locally):
+
+```env
+PUBLIC_LAUNCH_DATE="2026-10-01T00:00:00+05:30"
 ```
 
-## Configure Countdown Date
-
-The countdown target date can be changed with an environment variable:
-
-```bash
-VITE_LAUNCH_DATE="2026-08-01T00:00:00+05:30"
-```
-
-Or update the fallback value directly in:
-
-```txt
-src/App.jsx
-```
+The app checks the following variables in order:
+1. `PUBLIC_LAUNCH_DATE`
+2. `LAUNCH_DATE`
+3. `VITE_LAUNCH_DATE` (backwards compatibility)
+4. Default fallback: `"2026-10-01T00:00:00+05:30"`
