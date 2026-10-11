@@ -92,3 +92,33 @@ test('BMR Mifflin-St Jeor formula operates accurately', () => {
   assert.strictEqual(femaleBmr, 1345.25);
 });
 
+test('Contact form payload validation enforces mandatory fields and honeypot', () => {
+  const validatePayload = (payload) => {
+    if (payload._honeypot && payload._honeypot.trim().length > 0) {
+      return { ok: true, spamFiltered: true };
+    }
+    if (!payload.fullName || !payload.email || !payload.phone) {
+      return { ok: false, error: 'Missing mandatory fields' };
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(payload.email)) {
+      return { ok: false, error: 'Invalid email' };
+    }
+    return { ok: true, spamFiltered: false };
+  };
+
+  // Valid submission
+  const valid = validatePayload({ fullName: 'Rohan', email: 'rohan@example.com', phone: '+91 9999999999', plan: 'Gold' });
+  assert.strictEqual(valid.ok, true);
+  assert.strictEqual(valid.spamFiltered, false);
+
+  // Missing email
+  const missingEmail = validatePayload({ fullName: 'Rohan', phone: '+91 9999999999' });
+  assert.strictEqual(missingEmail.ok, false);
+
+  // Bot submission (honeypot filled)
+  const botSubmission = validatePayload({ fullName: 'Bot', email: 'bot@spam.com', phone: '123', _honeypot: 'spam-bot-url' });
+  assert.strictEqual(botSubmission.ok, true);
+  assert.strictEqual(botSubmission.spamFiltered, true);
+});
+

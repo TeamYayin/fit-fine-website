@@ -72,6 +72,9 @@ import Layout from '../layouts/Layout.astro';
         <div class="w-full lg:w-1/2 flex justify-center lg:justify-end">
           <div class="w-full max-w-md bg-black border border-gold shadow-[0_0_30px_rgba(212,175,55,0.25)] p-8 rounded-2xl relative">
             <form id="contact-form" class="space-y-5">
+              {/* Bot Honeypot (Hidden) */}
+              <input type="text" id="contact-honeypot" name="_honeypot" class="hidden" tabindex="-1" autocomplete="off" />
+
               {/* Plan Selection */}
               <div>
                 <label class="block text-sm font-bold text-white text-center mb-3">Select Desired Tier</label>
@@ -114,9 +117,9 @@ import Layout from '../layouts/Layout.astro';
                 <div>
                   <label class="block text-[11px] font-bold text-gold uppercase tracking-widest mb-1.5">Preferred Time</label>
                   <select id="contact-time" class="w-full px-4 py-3 bg-black border border-white/10 rounded-lg text-white focus:border-gold outline-none text-sm">
-                    <option value="morning">Morning (9 AM - 12 PM)</option>
-                    <option value="afternoon">Afternoon (12 PM - 4 PM)</option>
-                    <option value="evening">Evening (4 PM - 8 PM)</option>
+                    <option value="Morning (9 AM - 12 PM)">Morning (9 AM - 12 PM)</option>
+                    <option value="Afternoon (12 PM - 4 PM)">Afternoon (12 PM - 4 PM)</option>
+                    <option value="Evening (4 PM - 8 PM)">Evening (4 PM - 8 PM)</option>
                   </select>
                 </div>
               </div>
@@ -126,14 +129,25 @@ import Layout from '../layouts/Layout.astro';
                 <textarea id="contact-message" rows="3" placeholder="Tell us about your objectives, current routine, or challenges..." class="w-full px-4 py-3 bg-black border border-white/10 rounded-lg text-white focus:border-gold outline-none text-sm"></textarea>
               </div>
 
-              <button type="submit" id="submit-btn" class="w-full py-4 bg-gold text-black font-bold uppercase tracking-wider text-xs rounded-full hover:bg-gold-light transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)]">
+              <button type="submit" id="submit-btn" class="w-full py-4 bg-gold text-black font-bold uppercase tracking-wider text-xs rounded-full hover:bg-gold-light transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] disabled:opacity-50 disabled:cursor-not-allowed">
                 Submit Consultation Request
               </button>
             </form>
 
-            <div id="contact-success" class="mt-6 p-4 rounded-xl bg-gold/10 border border-gold text-center hidden">
-              <p class="text-gold font-bold text-sm">Consultation Request Received</p>
-              <p class="text-gray-300 text-xs mt-1">Our coach will reach out to you within 24 hours at your chosen time.</p>
+            {/* Success Box */}
+            <div id="contact-success" class="mt-6 p-5 rounded-xl bg-gold/10 border border-gold text-center hidden">
+              <div class="text-gold font-bold text-sm flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                <span>Consultation Request Received</span>
+              </div>
+              <p class="text-gray-300 text-xs mt-2 leading-relaxed">
+                Our coach will reach out to you within 24 hours at your chosen callback window.
+              </p>
+            </div>
+
+            {/* Error Box */}
+            <div id="contact-error" class="mt-6 p-4 rounded-xl bg-red-950/60 border border-red-500/50 text-center hidden">
+              <p class="text-red-400 font-bold text-xs" id="contact-error-text">Failed to submit request.</p>
             </div>
           </div>
         </div>
@@ -142,11 +156,10 @@ import Layout from '../layouts/Layout.astro';
   </div>
 
   <script>
-    // Tier buttons
+    // Tier buttons pre-selection
     const tierBtns = document.querySelectorAll('.tier-btn');
     const selectedTierInput = document.getElementById('selected-tier') as HTMLInputElement | null;
 
-    // Read query parameter if present
     const urlParams = new URLSearchParams(window.location.search);
     const planParam = urlParams.get('plan');
     if (planParam && selectedTierInput) {
@@ -171,16 +184,59 @@ import Layout from '../layouts/Layout.astro';
       });
     });
 
-    // Form submission
+    // Form submission via Cloudflare Pages Function /api/contact
     const form = document.getElementById('contact-form') as HTMLFormElement | null;
+    const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement | null;
     const successBox = document.getElementById('contact-success');
-    form?.addEventListener('submit', (e) => {
+    const errorBox = document.getElementById('contact-error');
+    const errorText = document.getElementById('contact-error-text');
+
+    form?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (successBox) {
-        successBox.classList.remove('hidden');
-        form.reset();
+      successBox?.classList.add('hidden');
+      errorBox?.classList.add('hidden');
+
+      const payload = {
+        fullName: (document.getElementById('contact-name') as HTMLInputElement)?.value,
+        email: (document.getElementById('contact-email') as HTMLInputElement)?.value,
+        phone: (document.getElementById('contact-phone') as HTMLInputElement)?.value,
+        plan: selectedTierInput?.value || 'Gold',
+        callbackDate: (document.getElementById('contact-date') as HTMLInputElement)?.value,
+        callbackTime: (document.getElementById('contact-time') as HTMLSelectElement)?.value,
+        message: (document.getElementById('contact-message') as HTMLTextAreaElement)?.value,
+        _honeypot: (document.getElementById('contact-honeypot') as HTMLInputElement)?.value,
+      };
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Transmitting Request...';
+      }
+
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (res.ok && data.success) {
+          successBox?.classList.remove('hidden');
+          form.reset();
+        } else {
+          if (errorText) errorText.textContent = data.error || 'Failed to submit request. Please try again or call our hotline.';
+          errorBox?.classList.remove('hidden');
+        }
+      } catch (err) {
+        if (errorText) errorText.textContent = 'Network error reaching submission server. Please try again or call our hotline.';
+        errorBox?.classList.remove('hidden');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Consultation Request';
+        }
       }
     });
   </script>
 </Layout>
-
