@@ -91,3 +91,4 @@ test('BMR Mifflin-St Jeor formula operates accurately', () => {
   const femaleBmr = calcBMR(60, 165, 25, 'female');
   assert.strictEqual(femaleBmr, 1345.25);
 });
+

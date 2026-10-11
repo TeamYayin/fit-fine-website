@@ -404,3 +404,4 @@ export const CATEGORIES = [
   'Lifestyle & Habits',
   'Mental Health & Motivation'
 ];
+

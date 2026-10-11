@@ -36,3 +36,4 @@ git commit -m "${1:-"feat: Rework fit-fine-website into Astro"}"
 
 echo "✅ Commit successful!"
 exit 0
+

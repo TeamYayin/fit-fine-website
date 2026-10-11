@@ -13,11 +13,10 @@ const currentPath = Astro.url.pathname;
 
 const navItems = [
   { name: "Home", href: "/" },
-  { name: "Blogs", href: "/blog" },
   { name: "Plans", href: "/plans" },
   { name: "Tools", href: "/tools" },
   { name: "Diet Plans", href: "/diet-plans" },
-  { name: "FAQs", href: "/faq" },
+  { name: "Blog", href: "/blog" },
   { name: "Contact", href: "/contact" },
 ];
 ---
@@ -182,7 +181,7 @@ const navItems = [
               Quick Links
             </h4>
             <ul class="space-y-3 text-sm text-gray-400">
-              <li><a href="/blog" class="hover:text-gold transition-colors">Blogs</a></li>
+              <li><a href="/blog" class="hover:text-gold transition-colors">Blog</a></li>
               <li><a href="/plans" class="hover:text-gold transition-colors">Premium Plans</a></li>
               <li><a href="/diet-plans" class="hover:text-gold transition-colors">Diet Plans</a></li>
               <li><a href="/tools" class="hover:text-gold transition-colors">Fitness Calculators</a></li>
@@ -332,3 +331,4 @@ const navItems = [
     </script>
   </body>
 </html>
+
