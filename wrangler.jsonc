@@ -8,7 +8,8 @@
   },
   "vars": {
     "CONTACT_FROM_EMAIL": "noreply-contact@eugenfnf.com",
-    "CONTACT_RECEIVER_EMAIL": "subscriptions@eugenfnf.com"
+    "CONTACT_RECEIVER_EMAIL": "subscriptions@eugenfnf.com",
+    "PUBLIC_LAUNCH_DATE": "2026-11-11T00:00:00+05:30"
   },
   "observability": {
     "enabled": true,
