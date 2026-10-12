@@ -241,8 +241,8 @@ const navItems = [
           <button id="tab-user" class="flex-1 py-2 text-xs font-semibold uppercase tracking-wider bg-gold text-black transition-all">
             User Login
           </button>
-          <button id="tab-admin" class="flex-1 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 hover:text-white transition-all">
-            Admin Login
+          <button id="tab-staff" class="flex-1 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 hover:text-white transition-all">
+            Staff Login
           </button>
         </div>
 
@@ -255,8 +255,8 @@ const navItems = [
             <label class="block text-[11px] font-bold text-gold uppercase tracking-widest mb-2">Password</label>
             <input type="password" id="auth-password" required minlength="4" class="w-full px-4 py-3 bg-black border border-white/10 text-white focus:border-gold outline-none text-sm" placeholder="••••••••" />
           </div>
-          <div id="admin-hint" class="text-xs text-gray-500 italic hidden">
-            Hint: admin@fitlife.com / admin
+          <div id="staff-hint" class="text-xs text-gray-500 italic hidden">
+            Hint: staff@eugenfnf.com / staff
           </div>
           <button type="submit" id="auth-submit" class="w-full py-3 bg-gold text-black font-bold uppercase tracking-wider text-sm rounded-full hover:bg-gold-light transition-all shadow-[0_0_15px_rgba(212,175,55,0.3)]">
             Enter Dashboard
@@ -284,9 +284,9 @@ const navItems = [
       const openAuthBtn = document.getElementById('open-auth-btn');
       const closeAuthBtn = document.getElementById('close-auth-btn');
       const tabUser = document.getElementById('tab-user');
-      const tabAdmin = document.getElementById('tab-admin');
+      const tabStaff = document.getElementById('tab-staff');
       const modalTitle = document.getElementById('modal-title');
-      const adminHint = document.getElementById('admin-hint');
+      const staffHint = document.getElementById('staff-hint');
       const authSubmit = document.getElementById('auth-submit');
       const authForm = document.getElementById('auth-form') as HTMLFormElement | null;
       let mode = 'USER';
@@ -297,31 +297,31 @@ const navItems = [
       tabUser?.addEventListener('click', () => {
         mode = 'USER';
         tabUser.className = 'flex-1 py-2 text-xs font-semibold uppercase tracking-wider bg-gold text-black transition-all';
-        tabAdmin?.setAttribute('class', 'flex-1 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 hover:text-white transition-all');
+        tabStaff?.setAttribute('class', 'flex-1 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 hover:text-white transition-all');
         if (modalTitle) modalTitle.textContent = 'Member Access';
-        adminHint?.classList.add('hidden');
+        staffHint?.classList.add('hidden');
         if (authSubmit) authSubmit.textContent = 'Enter Dashboard';
       });
 
-      tabAdmin?.addEventListener('click', () => {
-        mode = 'ADMIN';
-        tabAdmin.className = 'flex-1 py-2 text-xs font-semibold uppercase tracking-wider bg-gold text-black transition-all';
+      tabStaff?.addEventListener('click', () => {
+        mode = 'STAFF';
+        tabStaff.className = 'flex-1 py-2 text-xs font-semibold uppercase tracking-wider bg-gold text-black transition-all';
         tabUser?.setAttribute('class', 'flex-1 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 hover:text-white transition-all');
-        if (modalTitle) modalTitle.textContent = 'Admin Portal';
-        adminHint?.classList.remove('hidden');
-        if (authSubmit) authSubmit.textContent = 'Access Panel';
+        if (modalTitle) modalTitle.textContent = 'Staff Portal';
+        staffHint?.classList.remove('hidden');
+        if (authSubmit) authSubmit.textContent = 'Access Staff Panel';
       });
 
       authForm?.addEventListener('submit', (e) => {
         e.preventDefault();
         const email = (document.getElementById('auth-email') as HTMLInputElement)?.value;
         const password = (document.getElementById('auth-password') as HTMLInputElement)?.value;
-        if (mode === 'ADMIN') {
-          if (email === 'admin@fitlife.com' && password === 'admin') {
+        if (mode === 'STAFF') {
+          if (email === 'staff@eugenfnf.com' && password === 'staff') {
             authModal?.classList.add('hidden');
             window.location.href = '/admin';
           } else {
-            alert('Invalid admin credentials. Try admin@fitlife.com / admin');
+            alert('Invalid staff credentials. Try staff@eugenfnf.com / staff');
           }
         } else {
           alert(`Welcome back, ${email}!`);

@@ -1,6 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
 import {
+  renderAdminNotificationEmail,
+  renderUserConfirmationEmail,
+} from '../functions/templates/emailTemplates.js';
+import {
   PLANS,
   SUCCESS_STORIES,
   DIET_PLANS,
@@ -144,5 +148,85 @@ test('Worker entrypoint routes /api/contact correctly', async () => {
   });
   assert.strictEqual(assetFetched, true);
 });
+
+test('Email templates module renders admin alert and user confirmation correctly (SOLID SRP)', () => {
+  const adminHtml = renderAdminNotificationEmail({
+    fullName: 'Jane Smith',
+    email: 'jane@example.com',
+    phone: '+91 98765 43210',
+    plan: 'Platinum',
+    callbackDate: '2026-10-25',
+    callbackTime: 'Evening (4 PM - 8 PM)',
+    message: 'Looking to prepare for marathon',
+  });
+
+  assert.ok(adminHtml.includes('Eugen Fit & Fine'));
+  assert.ok(adminHtml.includes('Platinum Tier'));
+  assert.ok(adminHtml.includes('Jane Smith'));
+  assert.ok(adminHtml.includes('jane@example.com'));
+  assert.ok(adminHtml.includes('+91 98765 43210'));
+  assert.ok(adminHtml.includes('2026-10-25'));
+  assert.ok(adminHtml.includes('Looking to prepare for marathon'));
+
+  const userHtml = renderUserConfirmationEmail({
+    fullName: 'Jane Smith',
+    phone: '+91 98765 43210',
+    plan: 'Platinum',
+    callbackDate: '2026-10-25',
+    callbackTime: 'Evening (4 PM - 8 PM)',
+    receiverEmail: 'subscriptions@eugenfnf.com',
+  });
+
+  assert.ok(userHtml.includes('Hello <strong>Jane Smith</strong>'));
+  assert.ok(userHtml.includes('Consultation Confirmed'));
+  assert.ok(userHtml.includes('Platinum Tier'));
+  assert.ok(userHtml.includes('+91 98765 43210'));
+  assert.ok(userHtml.includes('What to Expect Next'));
+  assert.ok(userHtml.includes('subscriptions@eugenfnf.com'));
+});
+
+test('Phone number validation correctly filters valid and invalid formats', () => {
+  const isValidPhone = (phone) => {
+    const clean = phone.replace(/[\s\-\(\)\.]/g, '');
+    return /^\+?[0-9]{10,15}$/.test(clean);
+  };
+
+  // Valid numbers
+  assert.strictEqual(isValidPhone('+91 98765 43210'), true);
+  assert.strictEqual(isValidPhone('9876543210'), true);
+  assert.strictEqual(isValidPhone('+1 (555) 234-5678'), true);
+  assert.strictEqual(isValidPhone('080-23456789'), true);
+  assert.strictEqual(isValidPhone('+44 7911 123456'), true);
+
+  // Invalid numbers
+  assert.strictEqual(isValidPhone('12345'), false);
+  assert.strictEqual(isValidPhone('abcdefghij'), false);
+  assert.strictEqual(isValidPhone('+91 abcde 12345'), false);
+  assert.strictEqual(isValidPhone(''), false);
+  assert.strictEqual(isValidPhone('123456789012345678'), false); // > 15 digits
+});
+
+test('Callback date validation rejects past dates and accepts upcoming dates', () => {
+  const validateDate = (dateStr) => {
+    const parsed = new Date(dateStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return !isNaN(parsed.getTime()) && parsed >= today;
+  };
+
+  // Past dates
+  assert.strictEqual(validateDate('2020-01-01'), false);
+  assert.strictEqual(validateDate('2025-12-31'), false);
+  assert.strictEqual(validateDate('not-a-date'), false);
+
+  // Future dates
+  const futureYear = new Date().getFullYear() + 1;
+  assert.strictEqual(validateDate(`${futureYear}-06-15`), true);
+
+  // Today
+  const todayIso = new Date().toISOString().split('T')[0];
+  assert.strictEqual(validateDate(todayIso), true);
+});
+
 
 

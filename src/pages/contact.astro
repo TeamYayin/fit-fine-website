@@ -105,14 +105,56 @@ import Layout from '../layouts/Layout.astro';
                 </div>
                 <div>
                   <label class="block text-[11px] font-bold text-gold uppercase tracking-widest mb-1.5">Phone Number</label>
-                  <input type="tel" id="contact-phone" required placeholder="+91 98765 43210" class="w-full px-4 py-3 bg-black border border-white/10 rounded-lg text-white focus:border-gold outline-none text-sm" />
+                  <input type="tel" id="contact-phone" required placeholder="+91 98765 43210" class="w-full px-4 py-3 bg-black border border-white/10 rounded-lg text-white focus:border-gold outline-none text-sm transition-colors" />
+                  <p id="phone-error" class="text-xs text-red-400 mt-1 hidden">Please enter a valid 10 to 15 digit phone number (e.g. +91 98765 43210).</p>
                 </div>
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
+                <div class="relative">
                   <label class="block text-[11px] font-bold text-gold uppercase tracking-widest mb-1.5">Preferred Date</label>
-                  <input type="date" id="contact-date" required class="w-full px-4 py-3 bg-black border border-white/10 rounded-lg text-white focus:border-gold outline-none text-sm" />
+                  <button
+                    type="button"
+                    id="cal-trigger-btn"
+                    class="w-full px-4 py-3 bg-black border border-white/10 rounded-lg text-white focus:border-gold outline-none text-sm flex items-center justify-between text-left hover:border-gold/50 transition-colors"
+                  >
+                    <span id="cal-selected-display" class="text-gray-400">Select consultation date</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gold">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  </button>
+                  <input type="hidden" id="contact-date" name="callbackDate" required />
+                  <p id="date-error" class="text-xs text-red-400 mt-1 hidden">Please select a valid upcoming date.</p>
+
+                  {/* Custom Calendar Dropdown */}
+                  <div id="cal-popover" class="hidden absolute top-full left-0 z-50 mt-2 w-72 bg-[#121214] border border-gold/30 rounded-xl p-4 shadow-2xl backdrop-blur-md">
+                    <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10">
+                      <button type="button" id="cal-prev-month" class="p-1 text-gray-400 hover:text-gold rounded transition-colors disabled:opacity-20 disabled:cursor-not-allowed">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                      </button>
+                      <span id="cal-month-year" class="text-xs font-bold text-white uppercase tracking-wider">Month Year</span>
+                      <button type="button" id="cal-next-month" class="p-1 text-gray-400 hover:text-gold rounded transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                      </button>
+                    </div>
+
+                    <div class="grid grid-cols-7 gap-1 text-center mb-2">
+                      <span class="text-[10px] font-bold text-gold/70">Su</span>
+                      <span class="text-[10px] font-bold text-gold/70">Mo</span>
+                      <span class="text-[10px] font-bold text-gold/70">Tu</span>
+                      <span class="text-[10px] font-bold text-gold/70">We</span>
+                      <span class="text-[10px] font-bold text-gold/70">Th</span>
+                      <span class="text-[10px] font-bold text-gold/70">Fr</span>
+                      <span class="text-[10px] font-bold text-gold/70">Sa</span>
+                    </div>
+
+                    <div id="cal-days-grid" class="grid grid-cols-7 gap-1 text-xs">
+                      {/* Days rendered via client script */}
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <label class="block text-[11px] font-bold text-gold uppercase tracking-widest mb-1.5">Preferred Time</label>
@@ -184,7 +226,148 @@ import Layout from '../layouts/Layout.astro';
       });
     });
 
-    // Form submission via Cloudflare Pages Function /api/contact
+    // --- Custom Calendar Picker Component Logic ---
+    const calTriggerBtn = document.getElementById('cal-trigger-btn');
+    const calPopover = document.getElementById('cal-popover');
+    const calMonthYear = document.getElementById('cal-month-year');
+    const calDaysGrid = document.getElementById('cal-days-grid');
+    const calPrevMonth = document.getElementById('cal-prev-month') as HTMLButtonElement | null;
+    const calNextMonth = document.getElementById('cal-next-month') as HTMLButtonElement | null;
+    const contactDateInput = document.getElementById('contact-date') as HTMLInputElement | null;
+    const calSelectedDisplay = document.getElementById('cal-selected-display');
+    const dateError = document.getElementById('date-error');
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let currentView = new Date(today.getFullYear(), today.getMonth(), 1);
+    let selectedDateIso = '';
+
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    function renderCalendar() {
+      if (!calMonthYear || !calDaysGrid) return;
+      const viewYear = currentView.getFullYear();
+      const viewMonth = currentView.getMonth();
+
+      calMonthYear.textContent = `${monthNames[viewMonth]} ${viewYear}`;
+
+      // Disable prev button if view is currently in current month or earlier
+      if (calPrevMonth) {
+        const isCurrentOrPastMonth =
+          viewYear < today.getFullYear() ||
+          (viewYear === today.getFullYear() && viewMonth <= today.getMonth());
+        calPrevMonth.disabled = isCurrentOrPastMonth;
+      }
+
+      calDaysGrid.innerHTML = '';
+
+      const firstDayIdx = new Date(viewYear, viewMonth, 1).getDay();
+      const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+      // Empty leading slots
+      for (let i = 0; i < firstDayIdx; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'p-1';
+        calDaysGrid.appendChild(emptyCell);
+      }
+
+      // Day buttons
+      for (let day = 1; day <= daysInMonth; day++) {
+        const cellDate = new Date(viewYear, viewMonth, day);
+        cellDate.setHours(0, 0, 0, 0);
+        const isoString = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+        const dayBtn = document.createElement('button');
+        dayBtn.type = 'button';
+        dayBtn.textContent = String(day);
+
+        if (cellDate < today) {
+          dayBtn.disabled = true;
+          dayBtn.className = 'w-full py-1.5 text-center text-xs text-gray-600 opacity-25 cursor-not-allowed';
+        } else {
+          if (isoString === selectedDateIso) {
+            dayBtn.className = 'w-full py-1.5 text-center text-xs font-bold bg-gold text-black rounded shadow-md';
+          } else {
+            dayBtn.className = 'w-full py-1.5 text-center text-xs text-gray-300 hover:bg-gold/20 hover:text-gold rounded transition-colors';
+          }
+
+          dayBtn.addEventListener('click', () => {
+            selectedDateIso = isoString;
+            if (contactDateInput) contactDateInput.value = isoString;
+            if (calSelectedDisplay) {
+              calSelectedDisplay.textContent = cellDate.toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+              });
+              calSelectedDisplay.className = 'text-white font-medium text-sm';
+            }
+            dateError?.classList.add('hidden');
+            calPopover?.classList.add('hidden');
+            renderCalendar();
+          });
+        }
+
+        calDaysGrid.appendChild(dayBtn);
+      }
+    }
+
+    renderCalendar();
+
+    calTriggerBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      calPopover?.classList.toggle('hidden');
+    });
+
+    calPrevMonth?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentView.setMonth(currentView.getMonth() - 1);
+      renderCalendar();
+    });
+
+    calNextMonth?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentView.setMonth(currentView.getMonth() + 1);
+      renderCalendar();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!calPopover?.contains(e.target as Node) && !calTriggerBtn?.contains(e.target as Node)) {
+        calPopover?.classList.add('hidden');
+      }
+    });
+
+    // --- Phone Number Real-time Validation ---
+    const phoneInput = document.getElementById('contact-phone') as HTMLInputElement | null;
+    const phoneError = document.getElementById('phone-error');
+
+    function isValidPhoneNumber(phone: string): boolean {
+      const clean = phone.replace(/[\s\-\(\)\.]/g, '');
+      return /^\+?[0-9]{10,15}$/.test(clean);
+    }
+
+    phoneInput?.addEventListener('input', () => {
+      const val = phoneInput.value.trim();
+      if (val.length > 0) {
+        if (isValidPhoneNumber(val)) {
+          phoneError?.classList.add('hidden');
+          phoneInput.classList.remove('border-red-500');
+        } else {
+          phoneError?.classList.remove('hidden');
+          phoneInput.classList.add('border-red-500');
+        }
+      } else {
+        phoneError?.classList.add('hidden');
+        phoneInput.classList.remove('border-red-500');
+      }
+    });
+
+    // --- Form submission via Cloudflare Pages Function /api/contact ---
     const form = document.getElementById('contact-form') as HTMLFormElement | null;
     const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement | null;
     const successBox = document.getElementById('contact-success');
@@ -196,12 +379,27 @@ import Layout from '../layouts/Layout.astro';
       successBox?.classList.add('hidden');
       errorBox?.classList.add('hidden');
 
+      const phoneVal = phoneInput?.value || '';
+      if (!isValidPhoneNumber(phoneVal)) {
+        phoneError?.classList.remove('hidden');
+        phoneInput?.classList.add('border-red-500');
+        phoneInput?.focus();
+        return;
+      }
+
+      const chosenDate = contactDateInput?.value;
+      if (!chosenDate || new Date(chosenDate) < today) {
+        dateError?.classList.remove('hidden');
+        calPopover?.classList.remove('hidden');
+        return;
+      }
+
       const payload = {
         fullName: (document.getElementById('contact-name') as HTMLInputElement)?.value,
         email: (document.getElementById('contact-email') as HTMLInputElement)?.value,
-        phone: (document.getElementById('contact-phone') as HTMLInputElement)?.value,
+        phone: phoneVal,
         plan: selectedTierInput?.value || 'Gold',
-        callbackDate: (document.getElementById('contact-date') as HTMLInputElement)?.value,
+        callbackDate: chosenDate,
         callbackTime: (document.getElementById('contact-time') as HTMLSelectElement)?.value,
         message: (document.getElementById('contact-message') as HTMLTextAreaElement)?.value,
         _honeypot: (document.getElementById('contact-honeypot') as HTMLInputElement)?.value,
@@ -224,6 +422,13 @@ import Layout from '../layouts/Layout.astro';
         if (res.ok && data.success) {
           successBox?.classList.remove('hidden');
           form.reset();
+          selectedDateIso = '';
+          if (contactDateInput) contactDateInput.value = '';
+          if (calSelectedDisplay) {
+            calSelectedDisplay.textContent = 'Select consultation date';
+            calSelectedDisplay.className = 'text-gray-400';
+          }
+          renderCalendar();
         } else {
           let msg = data.error || (res.status === 404 ? 'API endpoint /api/contact not found (404).' : `Server error (${res.status}): Please check server configuration.`);
           if (data.details) {

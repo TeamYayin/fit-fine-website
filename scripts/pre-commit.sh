@@ -1,6 +1,16 @@
 #!/bin/bash
+COMMIT_MSG="$1"
+
+if [ -z "$COMMIT_MSG" ]; then
+  echo "❌ Error: Commit message is required."
+  echo "Usage: ./scripts/pre-commit.sh \"<type>(<scope>): <distinct description>\""
+  echo "Example: ./scripts/pre-commit.sh \"feat(contact): add calendar picker and phone validation\""
+  exit 1
+fi
+
 echo "========================================"
 echo "Running fit-fine-website Pre-Commit..."
+echo "Commit message: $COMMIT_MSG"
 echo "========================================"
 
 # Run unit tests
@@ -32,7 +42,7 @@ echo "All tests passed! Performing Git Commit..."
 echo "========================================"
 
 git add .
-git commit -m "${1:-"feat: Rework fit-fine-website into Astro"}"
+git commit -m "$COMMIT_MSG"
 
 echo "✅ Commit successful!"
 exit 0

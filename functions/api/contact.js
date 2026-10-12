@@ -1,6 +1,11 @@
+import {
+  renderAdminNotificationEmail,
+  renderUserConfirmationEmail,
+} from '../templates/emailTemplates.js';
+
 /**
  * Cloudflare Pages Function & Worker Handler: /api/contact
- * Handles consultation requests and delivers:
+ * Handles consultation requests, input validation, and delivers:
  * 1. Admin Alert to coaching team (CONTACT_RECEIVER_EMAIL)
  * 2. Confirmation & Welcome Email to applicant (email)
  */
@@ -34,9 +39,9 @@ export async function onRequestPost(context) {
     }
 
     // 2. Validate mandatory fields
-    if (!fullName || !email || !phone) {
+    if (!fullName || !email || !phone || !callbackDate) {
       return new Response(
-        JSON.stringify({ error: 'Please provide full name, email address, and phone number.' }),
+        JSON.stringify({ error: 'Please provide full name, email, phone number, and preferred date.' }),
         { status: 400, headers: corsHeaders }
       );
     }
@@ -46,6 +51,27 @@ export async function onRequestPost(context) {
     if (!emailRegex.test(email)) {
       return new Response(
         JSON.stringify({ error: 'Please provide a valid email address.' }),
+        { status: 400, headers: corsHeaders }
+      );
+    }
+
+    // 4. Phone number validation (10 to 15 digits, international/Indian formats)
+    const cleanPhone = phone.replace(/[\s\-\(\)\.]/g, '');
+    const phoneRegex = /^\+?[0-9]{10,15}$/;
+    if (!phoneRegex.test(cleanPhone)) {
+      return new Response(
+        JSON.stringify({ error: 'Please provide a valid 10 to 15 digit phone number (e.g. +91 98765 43210).' }),
+        { status: 400, headers: corsHeaders }
+      );
+    }
+
+    // 5. Date validation (must not be past date)
+    const parsedDate = new Date(callbackDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (isNaN(parsedDate.getTime()) || parsedDate < today) {
+      return new Response(
+        JSON.stringify({ error: 'Please select a valid upcoming callback date.' }),
         { status: 400, headers: corsHeaders }
       );
     }
@@ -72,116 +98,28 @@ export async function onRequestPost(context) {
     const cleanFromAddress = rawFromEmail.replace(/^.*<([^>]+)>.*$/, '$1').trim();
     const adminFromHeader = `Eugen FnF Inquiries <${cleanFromAddress}>`;
     const userFromHeader = `Eugen Fit & Fine <${cleanFromAddress}>`;
+
     console.log(`[contact] Dispatching emails via Resend with sender: ${cleanFromAddress}`);
 
-    // 4. Construct luxury formatted HTML email for coaching / sales team
-    const adminEmailHtml = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #000000; color: #ffffff; padding: 30px; border: 1px solid #D4AF37; border-radius: 8px;">
-        <div style="text-align: center; border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 25px;">
-          <h1 style="color: #D4AF37; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 2px;">Eugen Fit & Fine</h1>
-          <p style="color: #888; font-size: 13px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px;">New Consultation Request</p>
-        </div>
+    // Render templates using dedicated emailTemplates module (Single Responsibility Principle)
+    const adminEmailHtml = renderAdminNotificationEmail({
+      fullName,
+      email,
+      phone,
+      plan,
+      callbackDate,
+      callbackTime,
+      message,
+    });
 
-        <div style="background-color: #1c1c1e; padding: 20px; border-radius: 6px; margin-bottom: 20px;">
-          <h2 style="color: #ffffff; font-size: 18px; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #2a2a2c; padding-bottom: 8px;">Applicant Details</h2>
-          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-            <tr>
-              <td style="color: #D4AF37; padding: 6px 0; font-weight: bold; width: 140px;">Selected Tier:</td>
-              <td style="color: #ffffff; font-weight: bold;">${plan} Tier</td>
-            </tr>
-            <tr>
-              <td style="color: #888; padding: 6px 0;">Full Name:</td>
-              <td style="color: #ffffff;">${fullName}</td>
-            </tr>
-            <tr>
-              <td style="color: #888; padding: 6px 0;">Email Address:</td>
-              <td style="color: #ffffff;"><a href="mailto:${email}" style="color: #D4AF37; text-decoration: none;">${email}</a></td>
-            </tr>
-            <tr>
-              <td style="color: #888; padding: 6px 0;">Phone Number:</td>
-              <td style="color: #ffffff;"><a href="tel:${phone}" style="color: #D4AF37; text-decoration: none;">${phone}</a></td>
-            </tr>
-            <tr>
-              <td style="color: #888; padding: 6px 0;">Callback Date:</td>
-              <td style="color: #ffffff;">${callbackDate || 'Not specified'}</td>
-            </tr>
-            <tr>
-              <td style="color: #888; padding: 6px 0;">Preferred Window:</td>
-              <td style="color: #ffffff;">${callbackTime}</td>
-            </tr>
-          </table>
-        </div>
-
-        ${
-          message
-            ? `
-        <div style="background-color: #1c1c1e; padding: 20px; border-radius: 6px; margin-bottom: 20px;">
-          <h2 style="color: #ffffff; font-size: 16px; margin-top: 0; margin-bottom: 10px;">Goals & Notes</h2>
-          <p style="color: #cccccc; font-size: 14px; line-height: 1.6; margin: 0; white-space: pre-wrap;">${message}</p>
-        </div>
-        `
-            : ''
-        }
-
-        <div style="text-align: center; color: #666; font-size: 12px; margin-top: 30px; border-top: 1px solid #222; padding-top: 15px;">
-          Delivered from Eugen Fit & Fine Website • Cloudflare Serverless Function
-        </div>
-      </div>
-    `;
-
-    // 5. Construct luxury confirmation email for the applicant / user
-    const userConfirmationHtml = `
-      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0A0A0A; color: #FFFFFF; padding: 32px; border: 1px solid #D4AF37; border-radius: 10px;">
-        <div style="text-align: center; border-bottom: 1px solid rgba(212, 175, 55, 0.25); padding-bottom: 20px; margin-bottom: 24px;">
-          <h1 style="color: #D4AF37; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 2px;">Eugen Fit & Fine</h1>
-          <p style="color: #A0A0A0; font-size: 13px; margin-top: 6px; text-transform: uppercase; letter-spacing: 1.5px;">Consultation Confirmed</p>
-        </div>
-
-        <p style="font-size: 16px; line-height: 1.6; color: #EEEEEE;">
-          Hello <strong>${fullName}</strong>,
-        </p>
-        <p style="font-size: 14px; line-height: 1.6; color: #CCCCCC;">
-          Thank you for requesting an elite coaching consultation with Eugen Fit & Fine. We have received your application for the <strong>${plan} Tier</strong> and our senior coaching team is preparing your review.
-        </p>
-
-        <div style="background-color: #141416; border: 1px solid #28282C; border-left: 3px solid #D4AF37; border-radius: 6px; padding: 18px; margin: 24px 0;">
-          <h3 style="color: #D4AF37; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin-top: 0; margin-bottom: 12px;">Your Consultation Request Summary</h3>
-          <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #CCCCCC;">
-            <tr>
-              <td style="padding: 6px 0; color: #888888; width: 140px;">Coaching Tier:</td>
-              <td style="color: #FFFFFF; font-weight: bold;">${plan} Tier</td>
-            </tr>
-            <tr>
-              <td style="padding: 6px 0; color: #888888;">Callback Date:</td>
-              <td style="color: #FFFFFF;">${callbackDate || 'As soon as possible'}</td>
-            </tr>
-            <tr>
-              <td style="padding: 6px 0; color: #888888;">Callback Window:</td>
-              <td style="color: #FFFFFF;">${callbackTime}</td>
-            </tr>
-            <tr>
-              <td style="padding: 6px 0; color: #888888;">Contact Phone:</td>
-              <td style="color: #FFFFFF;">${phone}</td>
-            </tr>
-          </table>
-        </div>
-
-        <h3 style="color: #FFFFFF; font-size: 15px; margin-bottom: 8px;">What to Expect Next</h3>
-        <ol style="color: #BBBBBB; font-size: 14px; line-height: 1.7; padding-left: 20px; margin-top: 0;">
-          <li>A dedicated performance coach will review your objectives and lifestyle structure.</li>
-          <li>We will call you at <strong>${phone}</strong> during your requested callback window.</li>
-          <li>Together, we will calibrate your training protocol, nutrition breakdown, and tier onboarding.</li>
-        </ol>
-
-        <p style="font-size: 13px; color: #888888; line-height: 1.5; margin-top: 24px;">
-          Have questions or need to reschedule? Reply directly to this email or contact us at <a href="mailto:${receiverEmail}" style="color: #D4AF37; text-decoration: none;">${receiverEmail}</a>.
-        </p>
-
-        <div style="border-top: 1px solid #222222; margin-top: 28px; padding-top: 18px; text-align: center; color: #666666; font-size: 12px;">
-          © ${new Date().getFullYear()} Eugen Fit & Fine • Elite Fitness Experience
-        </div>
-      </div>
-    `;
+    const userConfirmationHtml = renderUserConfirmationEmail({
+      fullName,
+      phone,
+      plan,
+      callbackDate,
+      callbackTime,
+      receiverEmail,
+    });
 
     // 6. Send Admin Notification Email
     const adminEmailPromise = fetch('https://api.resend.com/emails', {
