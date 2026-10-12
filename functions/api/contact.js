@@ -61,13 +61,18 @@ export async function onRequestPost(context) {
       );
     }
 
-    const rawFromEmail = context?.env?.CONTACT_FROM_EMAIL || 'onboarding@resend.dev';
+    let rawFromEmail = context?.env?.CONTACT_FROM_EMAIL || 'noreply-contact@eugenfnf.com';
+    // If still set to onboarding@resend.dev from testing, automatically use the verified domain
+    if (rawFromEmail === 'onboarding@resend.dev') {
+      rawFromEmail = 'noreply-contact@eugenfnf.com';
+    }
     const receiverEmail = context?.env?.CONTACT_RECEIVER_EMAIL || 'subscriptions@eugenfnf.com';
 
     // Normalize sender email address (strip existing display names or angle brackets)
     const cleanFromAddress = rawFromEmail.replace(/^.*<([^>]+)>.*$/, '$1').trim();
     const adminFromHeader = `Eugen FnF Inquiries <${cleanFromAddress}>`;
     const userFromHeader = `Eugen Fit & Fine <${cleanFromAddress}>`;
+    console.log(`[contact] Dispatching emails via Resend with sender: ${cleanFromAddress}`);
 
     // 4. Construct luxury formatted HTML email for coaching / sales team
     const adminEmailHtml = `
