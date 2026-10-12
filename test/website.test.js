@@ -1,5 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
+import fs from 'node:fs';
+import path from 'node:path';
 import {
   renderAdminNotificationEmail,
   renderUserConfirmationEmail,
@@ -227,6 +229,52 @@ test('Callback date validation rejects past dates and accepts upcoming dates', (
   const todayIso = new Date().toISOString().split('T')[0];
   assert.strictEqual(validateDate(todayIso), true);
 });
+
+test('BlogLayout component exists and provides luxury editorial typography', () => {
+  const layoutPath = path.resolve('src/layouts/BlogLayout.astro');
+  assert.ok(fs.existsSync(layoutPath), 'BlogLayout.astro must exist in src/layouts/');
+
+  const content = fs.readFileSync(layoutPath, 'utf-8');
+  assert.ok(content.includes('prose-luxury'), 'BlogLayout must define luxury typography class');
+  assert.ok(content.includes('<slot />'), 'BlogLayout must contain slot for markdown content');
+  assert.ok(content.includes('Apply for Coaching'), 'BlogLayout must include coaching concierge CTA');
+  assert.ok(content.includes('Return to Editorial Hub'), 'BlogLayout must include back to blog hub navigation');
+});
+
+test('Blog content collection contains markdown post folders with valid index.md files', () => {
+  const blogDir = path.resolve('src/content/blog');
+  assert.ok(fs.existsSync(blogDir), 'src/content/blog directory must exist');
+
+  // Verify documentation guide exists
+  const guidePath = path.resolve('docs/BLOG_PUBLISHING_GUIDE.md');
+  assert.ok(fs.existsSync(guidePath), 'docs/BLOG_PUBLISHING_GUIDE.md guide must exist');
+
+  const entries = fs.readdirSync(blogDir, { withFileTypes: true });
+  const postFolders = entries.filter((e) => e.isDirectory());
+  assert.ok(postFolders.length >= 9, 'Must have at least 9 blog post folders');
+
+  for (const folder of postFolders) {
+    const indexPath = path.join(blogDir, folder.name, 'index.md');
+    assert.ok(fs.existsSync(indexPath), `Folder ${folder.name} must contain index.md`);
+
+    const mdContent = fs.readFileSync(indexPath, 'utf-8');
+    assert.ok(mdContent.startsWith('---'), `${folder.name}/index.md must start with frontmatter`);
+    assert.ok(mdContent.includes('title:'), `${folder.name}/index.md must include title`);
+    assert.ok(mdContent.includes('excerpt:'), `${folder.name}/index.md must include excerpt`);
+    assert.ok(mdContent.includes('category:'), `${folder.name}/index.md must include category`);
+    assert.ok(mdContent.includes('readTime:'), `${folder.name}/index.md must include readTime`);
+  }
+});
+
+test('Dynamic blog routing page exists for Astro content collection', () => {
+  const dynamicRoutePath = path.resolve('src/pages/blog/[...slug].astro');
+  assert.ok(fs.existsSync(dynamicRoutePath), 'src/pages/blog/[...slug].astro must exist');
+
+  const routeContent = fs.readFileSync(dynamicRoutePath, 'utf-8');
+  assert.ok(routeContent.includes("getCollection('blog')"), 'Dynamic route must query blog content collection');
+  assert.ok(routeContent.includes('BlogLayout'), 'Dynamic route must wrap content with BlogLayout');
+});
+
 
 
 
