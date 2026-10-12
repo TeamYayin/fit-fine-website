@@ -46,6 +46,7 @@ Many trainees mistakenly equate progressive overload solely with adding weight t
 The most common failure pattern observed among recreational lifters is the **ego trap**: escalating load at the sacrifice of biomechanical integrity.
 
 When form degrades:
+
 1. Target muscle recruitment drops as momentum and auxiliary joints take over.
 2. Injury risk spikes exponentially at connective tissue anchor points.
 3. Quantifiable data becomes meaningless because reps are inconsistent.

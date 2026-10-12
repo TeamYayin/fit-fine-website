@@ -16,9 +16,11 @@ Motivation is transient neurochemical excitement; identity and environmental des
 ## The Architecture of Automaticity
 
 ### 1. Cue, Routine, Reward
+
 Every routine initiates with an environmental trigger. Place your workout gear where you see it first thing in the morning.
 
 ### 2. The 2-Minute Rule
+
 When initiating a new fitness habit, reduce the friction so you can execute even on your lowest-energy days. Showing up consistently shapes neural identity.
 
 > "You do not rise to the level of your goals; you fall to the level of your systems."

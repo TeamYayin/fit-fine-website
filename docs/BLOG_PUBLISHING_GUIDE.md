@@ -28,12 +28,15 @@ The URL slug is automatically derived from the folder name:
 ## ✍️ How to Submit a New Blog Post
 
 ### Step 1: Create a Folder
+
 Create a descriptive folder name in kebab-case under `src/content/blog/`:
+
 ```bash
 mkdir src/content/blog/circadian-sleep-recovery
 ```
 
 ### Step 2: Create `index.md`
+
 Inside that folder, create `index.md` and define the required frontmatter header:
 
 ```markdown
@@ -58,7 +61,9 @@ Write your insights using standard Markdown headings, lists, blockquotes, and ta
 ```
 
 ### Step 3: Available Categories
+
 Choose one of our official site categories:
+
 * `Workout & Training`
 * `Diet & Nutrition`
 * `Weight Loss`
@@ -83,11 +88,15 @@ The layout is powered by `src/layouts/BlogLayout.astro`. You do not need to styl
 ## 🚀 Testing & Publishing
 
 To verify your article locally before committing:
+
 ```bash
 npm run build
 ```
+
 Once approved, commit with a descriptive conventional commit:
+
 ```bash
 ./scripts/pre-commit.sh "feat(blog): add circadian sleep recovery article"
 ```
+
 Your article will automatically appear on `/blog` and create its standalone route at `/blog/<folder-slug>`!
