@@ -61,8 +61,13 @@ export async function onRequestPost(context) {
       );
     }
 
-    const fromEmail = context?.env?.CONTACT_FROM_EMAIL || 'onboarding@resend.dev';
+    const rawFromEmail = context?.env?.CONTACT_FROM_EMAIL || 'onboarding@resend.dev';
     const receiverEmail = context?.env?.CONTACT_RECEIVER_EMAIL || 'subscriptions@eugenfnf.com';
+
+    // Normalize sender email address (strip existing display names or angle brackets)
+    const cleanFromAddress = rawFromEmail.replace(/^.*<([^>]+)>.*$/, '$1').trim();
+    const adminFromHeader = `Eugen FnF Inquiries <${cleanFromAddress}>`;
+    const userFromHeader = `Eugen Fit & Fine <${cleanFromAddress}>`;
 
     // 4. Construct luxury formatted HTML email for coaching / sales team
     const adminEmailHtml = `
@@ -181,7 +186,7 @@ export async function onRequestPost(context) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: `Eugen FnF Inquiries <${fromEmail}>`,
+        from: adminFromHeader,
         to: [receiverEmail],
         reply_to: email,
         subject: `New Consultation: ${fullName} (${plan} Tier)`,
@@ -197,7 +202,7 @@ export async function onRequestPost(context) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: `Eugen Fit & Fine <${fromEmail}>`,
+        from: userFromHeader,
         to: [email],
         reply_to: receiverEmail,
         subject: `Consultation Confirmed • Eugen Fit & Fine`,
@@ -217,17 +222,31 @@ export async function onRequestPost(context) {
       );
     }
 
+    let userEmailStatus = 'sent';
+    let userEmailError = null;
+    let userEmailId = null;
+
     if (userRes.status === 'rejected' || !userRes.value.ok) {
-      const userErr = userRes.status === 'fulfilled' ? await userRes.value.text() : userRes.reason?.message;
-      console.warn('User confirmation email could not be delivered:', userErr);
+      userEmailStatus = 'failed';
+      userEmailError = userRes.status === 'fulfilled' ? await userRes.value.text() : userRes.reason?.message;
+      console.error('User confirmation email error:', userEmailError);
+    } else {
+      const userData = await userRes.value.json().catch(() => ({}));
+      userEmailId = userData?.id || null;
+      console.log('User confirmation email sent successfully. ID:', userEmailId);
     }
 
     const adminResult = await adminRes.value.json().catch(() => ({}));
     return new Response(
       JSON.stringify({
         success: true,
-        message: 'Consultation request received and confirmation sent successfully.',
+        message: 'Consultation request received successfully.',
         id: adminResult.id,
+        userConfirmation: {
+          status: userEmailStatus,
+          id: userEmailId,
+          error: userEmailError,
+        },
       }),
       { status: 200, headers: corsHeaders }
     );
