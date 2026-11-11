@@ -1,0 +1,12 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["<APPLE_APP_ID_PREFIX>.com.eugenfnf.staff"],
+        "components": [
+          { "/": "/reset-password" }
+        ]
+      }
+    ]
+  }
+}
